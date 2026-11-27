@@ -7,7 +7,10 @@ const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 /* ---------- text fill ---------- */
 $("#first").textContent = S.first;
 $("#last").textContent = S.last;
-$("#roleLine").textContent = S.role.toUpperCase();
+$("#roleLine").textContent = S.role;
+$("#lede").textContent = S.lede;
+$("#pull").textContent = S.pull;
+$("#projCount").textContent = `${S.projects.length} projects`;
 $("#tagline").textContent = S.tagline;
 $("#nowLine").textContent = S.now;
 $("#schoolLine").textContent = S.school;
@@ -17,7 +20,7 @@ $("#skills").innerHTML = Object.entries(S.skills).map(([g, list]) =>
   `<p class="grp">${esc(g)}</p><div class="tags">${list.map(t => `<span>${esc(t)}</span>`).join("")}</div>`).join("");
 $("#awards").innerHTML = S.awards.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join("");
 const rb = $("#resumeBtn");
-if (S.resumePdf) rb.href = S.resumePdf; else rb.hidden = true;
+if (S.resumePdf) rb.href = S.resumePdf; else $("#resumeRow").hidden = true;
 
 /* ---------- blueprint figures ---------- */
 const FIG = {
@@ -75,8 +78,8 @@ const cab = $("#cabinet");
 cab.innerHTML = S.projects.map((p, i) => {
   const [c, t] = COLORS[i % COLORS.length];
   return `<article class="folder" style="--c:${c};--t:${t};z-index:${20 - i}" data-i="${i}">
-    <button class="tab" aria-expanded="false" aria-controls="fb${i}">CODE_${esc(p.code)} //</button>
-    <button class="spine" tabindex="-1" aria-hidden="true"><span>CODE_${esc(p.code)} // ${esc(p.short)}</span></button>
+    <button class="tab" aria-expanded="false" aria-controls="fb${i}">${esc(p.code)}</button>
+    <button class="spine" tabindex="-1" aria-hidden="true"><span>${esc(p.code)} / ${esc(p.short)}</span></button>
     <div class="f-body" id="fb${i}">
       <div>
         <h3 class="f-title">${esc(p.title)}</h3>
@@ -138,74 +141,24 @@ $("#courseGrid").innerHTML = S.courses.map(c => `<div class="ccard ${c.status ==
   <div class="code">${esc(c.code)}</div><div class="cname">${esc(c.name)}</div></div>`).join("");
 filterGroup("[data-c]", "c", () => $$("#courseGrid .ccard"), (el, f) => el.dataset.tag === f);
 
-/* ---------- hobbies board ---------- */
-const ICON = {
-  squirrel: `<path d="M60 70c16 0 26-14 22-30S62 16 50 22c10 4 12 14 6 22" fill="none" stroke="#0E3A35" stroke-width="4"/><ellipse cx="38" cy="62" rx="16" ry="14" fill="#0E3A35"/><circle cx="26" cy="44" r="10" fill="#0E3A35"/><path d="M22 35l3-9 5 8z" fill="#0E3A35"/>`,
-  chute: `<path d="M12 42a38 30 0 0 1 76 0z" fill="#35C8B4"/><path d="M12 42l38 34 38-34M31 42l19 34 19-34" fill="none" stroke="#0E3A35" stroke-width="2.5"/><circle cx="50" cy="82" r="6" fill="#0E3A35"/>`,
-  deck: `<rect x="10" y="30" width="80" height="44" rx="8" fill="#0E3A35"/><circle cx="32" cy="52" r="14" fill="#A4CF4A"/><circle cx="68" cy="52" r="14" fill="#A4CF4A"/><circle cx="32" cy="52" r="3" fill="#0E3A35"/><circle cx="68" cy="52" r="3" fill="#0E3A35"/>`,
-  keys: `<rect x="8" y="30" width="84" height="40" rx="4" fill="#fff" stroke="#0E3A35" stroke-width="3"/><path d="M20 30v40M32 30v40M44 30v40M56 30v40M68 30v40M80 30v40" stroke="#0E3A35" stroke-width="2"/><path d="M15 30h8v24h-8zM39 30h8v24h-8zM51 30h8v24h-8zM75 30h8v24h-8z" fill="#0E3A35"/>`,
-  ball: `<circle cx="50" cy="50" r="34" fill="#A4CF4A" stroke="#0E3A35" stroke-width="3"/><path d="M16 50h68M50 16v68M26 26c14 14 14 34 0 48M74 26c-14 14-14 34 0 48" fill="none" stroke="#0E3A35" stroke-width="2.5"/>`,
-  pen: `<path d="M20 80l8-26 40-40 18 18-40 40z" fill="#35C8B4" stroke="#0E3A35" stroke-width="3"/><path d="M20 80l8-26 18 18z" fill="#EDF7BE" stroke="#0E3A35" stroke-width="3"/>`,
-  cup: `<path d="M22 30h50l-6 52H28z" fill="#A4CF4A" stroke="#0E3A35" stroke-width="3"/><path d="M28 44h38" stroke="#0E3A35" stroke-width="2"/><path d="M52 30l8-20" stroke="#0E3A35" stroke-width="4"/>`
-};
-const SPOTS = [[3, 5], [27, 50], [27, 3], [51, 48], [51, 5], [75, 50], [75, 4], [3, 50]];
-const board = $("#board");
-board.innerHTML = S.hobbies.map((h, i) => {
-  const [x, y] = SPOTS[i % SPOTS.length], r = ((i * 37) % 13) - 6;
-  return `<div class="pol" style="left:${x}%;top:${y}%;transform:rotate(${r}deg)" tabindex="0">
-    <div class="ph">${h.img ? `<img src="${esc(h.img)}" alt="${esc(h.label)}">` : `<svg viewBox="0 0 100 100" aria-hidden="true">${ICON[h.icon] || ""}</svg>`}</div>
-    <div class="cap">${esc(h.label)}</div>${h.note ? `<div class="sub">${esc(h.note)}</div>` : ""}</div>`;
-}).join("");
-let z = 10;
-$$(".pol", board).forEach(p => {
-  p.addEventListener("pointerdown", e => {
-    if (window.innerWidth <= 760) return;
-    const b = board.getBoundingClientRect(), r = p.getBoundingClientRect();
-    const dx = e.clientX - r.left, dy = e.clientY - r.top;
-    p.style.zIndex = ++z; p.setPointerCapture(e.pointerId);
-    const move = ev => {
-      const x = Math.max(0, Math.min(ev.clientX - b.left - dx, b.width - r.width));
-      const y = Math.max(0, Math.min(ev.clientY - b.top - dy, b.height - r.height));
-      p.style.left = x + "px"; p.style.top = y + "px";
-    };
-    const up = () => { p.removeEventListener("pointermove", move); p.removeEventListener("pointerup", up); };
-    p.addEventListener("pointermove", move); p.addEventListener("pointerup", up);
-  });
-});
+/* ---------- hobbies ---------- */
+const TC = ["#C2F2E4", "#EDF7BE", "#35C8B4", "#A4CF4A"];
+$("#board").innerHTML = S.hobbies.map((h, i) => `<div class="tile ${h.img ? "has-img" : ""}" style="--tc:${TC[i % TC.length]}">
+  ${h.img ? `<img src="${esc(h.img)}" alt="${esc(h.label)}" loading="lazy">` : ""}
+  <span class="num">${String(i + 1).padStart(2, "0")}</span>
+  <div class="cap">${esc(h.label)}</div>${h.note ? `<div class="sub">${esc(h.note)}</div>` : ""}</div>`).join("");
 
 /* ---------- contact ---------- */
+const mb = $("#mailBig"); mb.textContent = S.email; mb.href = "mailto:" + S.email;
 const rows = [];
-if (S.email) rows.push(`<li><b>EMAIL</b><a href="mailto:${esc(S.email)}">${esc(S.email)}</a><button class="copy" id="copyMail">copy</button></li>`);
-if (S.linkedin) rows.push(`<li><b>LINKEDIN</b><a href="${esc(S.linkedin)}" target="_blank" rel="noopener">${esc(S.linkedin.replace(/^https?:\/\/(www\.)?/, ""))}</a></li>`);
-if (S.github) rows.push(`<li><b>GITHUB</b><a href="${esc(S.github)}" target="_blank" rel="noopener">${esc(S.github.replace(/^https?:\/\//, ""))}</a></li>`);
-if (S.resumePdf) rows.push(`<li><b>RESUME</b><a href="${esc(S.resumePdf)}" target="_blank" rel="noopener">download PDF ↗</a></li>`);
+if (S.email) rows.push(`<li><button class="copy" id="copyMail">Copy email</button></li>`);
+if (S.linkedin) rows.push(`<li><a href="${esc(S.linkedin)}" target="_blank" rel="noopener">LinkedIn ↗</a></li>`);
+if (S.github) rows.push(`<li><a href="${esc(S.github)}" target="_blank" rel="noopener">GitHub ↗</a></li>`);
+if (S.resumePdf) rows.push(`<li><a href="${esc(S.resumePdf)}" target="_blank" rel="noopener">Resume ↗</a></li>`);
 $("#contactList").innerHTML = rows.join("");
-const toast = msg => { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 2600); };
+const toast = msg => { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 2400); };
 $("#copyMail")?.addEventListener("click", async () => {
-  try { await navigator.clipboard.writeText(S.email); toast("Email copied ✓"); } catch { toast(S.email); }
-});
-const env = $(".envelope");
-new IntersectionObserver(es => es.forEach(e => e.isIntersecting && env.classList.add("opened")), { threshold: .5 }).observe(env);
-
-/* ---------- squirrel easter egg ---------- */
-const sq = $("#squirrel"), sqCount = $("#squirrelCount");
-let spotted = 0;
-try { spotted = +localStorage.getItem("squirrels") || 0; } catch {}
-const showCount = () => { if (spotted) { sqCount.hidden = false; sqCount.textContent = `squirrels spotted: ${spotted}`; } };
-showCount();
-const LINES = ["You found one! I photograph these around campus.", "Sometimes I photograph them by drone. Seriously.", "Another one. You'd make a good field researcher.", "Okay, you're officially a squirrel spotter."];
-const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-sq.hidden = false;
-function peek() {
-  sq.style.left = (8 + Math.random() * 80) + "vw";
-  sq.classList.add("peek");
-  setTimeout(() => sq.classList.remove("peek"), 4200);
-  setTimeout(peek, 22000 + Math.random() * 16000);
-}
-if (!reduce) setTimeout(peek, 9000);
-sq.addEventListener("click", () => {
-  spotted++; try { localStorage.setItem("squirrels", spotted); } catch {}
-  toast(LINES[Math.min(spotted - 1, LINES.length - 1)]); showCount(); sq.classList.remove("peek");
+  try { await navigator.clipboard.writeText(S.email); toast("Email copied"); } catch { toast(S.email); }
 });
 
 /* ---------- spec view ---------- */
@@ -217,14 +170,14 @@ function refreshSpec() {
     const r = el.getBoundingClientRect();
     if (!r.width) return;
     el.insertAdjacentHTML("beforeend",
-      `<span class="dim name">${esc(el.dataset.spec)}</span><span class="dim w">W ${Math.round(r.width)}</span>`);
+      `<span class="dim name">${esc(el.dataset.spec)}</span><span class="dim w">${Math.round(r.width)} × ${Math.round(r.height)}</span>`);
   });
 }
 function toggleSpec(on) {
   document.body.classList.toggle("specview", on);
   specBtn.setAttribute("aria-pressed", on);
   refreshSpec();
-  if (on) toast("Spec view on. Everything's measured in px.");
+  if (on) toast("Spec view: dimensions in px");
 }
 specBtn.addEventListener("click", () => toggleSpec(!document.body.classList.contains("specview")));
 addEventListener("keydown", e => {

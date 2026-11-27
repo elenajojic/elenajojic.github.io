@@ -8,9 +8,9 @@ window.SITE = {
   name: "Elena Jojic",
   first: "elena",
   last: "jojic",
-  role: "Robotics Engineer",
-  tagline: "Robotics @ Michigan · Perception · Premed",
-  school: "University of Michigan, class of 2029",
+  role: "Robotics Engineering · University of Michigan",
+  tagline: "Robotics (Perception) · Business minor · Premed",
+  school: "Class of 2029",
   now: "building lunar hardware with CLAWS",
 
   email: "elenajojic7@gmail.com",
@@ -21,11 +21,13 @@ window.SITE = {
   // Your cutout photo (background removed) goes in assets/ with this name.
   photo: "assets/elena.png",
 
+  lede: "I build robots that borrow from animals.",
+  pull: "Nature already solved a lot of hard mechanical problems. I want to borrow its answers.",
   about: [
-    "I'm a Robotics student at the University of Michigan, concentrating in Perception, with a Business minor and a premed track running alongside.",
-    "What I care about most is how animals move. Squid arms, crab pincers, cockroach legs: nature has already solved a lot of hard mechanical problems, and I want to borrow those answers for prosthetics, suits, and the tools people use every day.",
-    "I learn by building. Most of what I know came from taking a part through one more revision than felt reasonable.",
-    "Before engineering I was a Model UN and debate kid, so yes, I will happily pitch your project. And at 11 I went skydiving over the cliffs in Albania. I've been saying yes to crazy things ever since."
+    "I'm a Robotics student at the University of Michigan, concentrating in Perception, with a Business minor and a premed track alongside.",
+    "My focus is bio-inspired mechanisms: squid arms, crab pincers, cockroach legs, and how they can shape prosthetics, suits, and the tools people use every day.",
+    "I learn by building. Right now that means lunar hardware with CLAWS, wire-bending and legged robots in the BIRDS Lab, and adaptive tools for people with cerebral palsy.",
+    "Before engineering I did Model UN and debate, so presenting and pitching are some of my favorite parts of a project."
   ],
 
   /* ---------- PROJECTS (the file folders) ---------- */
@@ -172,7 +174,7 @@ window.SITE = {
     { code: "CHEM 216", name: "Organic Chemistry Lab", tag: "bio", status: "next" }
   ],
 
-  /* ---------- HOBBIES (draggable polaroids) ---------- */
+  /* ---------- HOBBIES (photo tiles) ---------- */
   // add img: "assets/squirrel.jpg" to show a real photo
   hobbies: [
     { label: "squirrel photography", note: "campus squirrels, sometimes by drone", icon: "squirrel", img: "" },
@@ -181,6 +183,6 @@ window.SITE = {
     { label: "piano + clarinet", note: "", icon: "keys", img: "" },
     { label: "basketball", note: "", icon: "ball", img: "" },
     { label: "logo design", note: "for practically every club I'm in", icon: "pen", img: "" },
-    { label: "matcha", note: "fuel", icon: "cup", img: "" }
+    { label: "matcha", note: "", icon: "cup", img: "" }
   ]
 };
