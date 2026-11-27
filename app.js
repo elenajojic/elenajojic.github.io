@@ -262,7 +262,7 @@ function render() {
   const Wc = cv.width, Hc = cv.height;
   ctx.clearRect(0, 0, Wc, Hc);
   ctx.globalAlpha = Math.min(1, intro * 1.5); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
-  ctx.fillStyle = matchMedia("(prefers-color-scheme: dark)").matches ? "#cfd6d4" : "#3b4241";
+  ctx.fillStyle = "#3b4241";
   const R = 85 * dpr, mx = mouse.x * dpr, my = mouse.y * dpr, live = mouse.active;
   ctx.beginPath();
   for (let k = 0; k < dots.length; k += 3) {
@@ -337,7 +337,7 @@ $("#marquee").innerHTML = `<div class="mq-track">${run}${run}</div>`;
 
 /* ---------- custom cursor ---------- */
 if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
-  document.documentElement.classList.add("has-cursor");
+  document.documentElement.classList.add("has-cursor", "cur-out");
   const dot = $(".cur-dot"), ring = $(".cur-ring"), label = $("span", ring);
   let tx = -100, ty = -100, rx = -100, ry = -100;
   addEventListener("pointermove", e => {

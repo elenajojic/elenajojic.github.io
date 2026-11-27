@@ -15,7 +15,7 @@ LAYOUT: poster hero, horizontal folder cabinet, about band, experience list, cou
 @font-face{font-family:"Plex Mono";src:url(assets/fonts/ibm-plex-mono-latin-500-normal.woff2) format("woff2");font-weight:500 700;font-display:swap}
 
 :root{
-  color-scheme:light dark;
+  color-scheme:light;
   --brume:#C2F2E4; --menthe:#35C8B4; --limonade:#EDF7BE; --verveine:#A4CF4A; --deep:#0E3A35;
   --bg:light-dark(#F7FBEA,#0B2421);
   --paper:light-dark(#FFFFFB,#103330);
@@ -29,12 +29,12 @@ LAYOUT: poster hero, horizontal folder cabinet, about band, experience list, cou
   --body:"Instrument Sans",system-ui,sans-serif;
   --mono:"Plex Mono",ui-monospace,monospace;
 }
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+:root,:root[data-theme]{color-scheme:light}
 *{box-sizing:border-box;min-width:0}
 html{overflow-x:clip;scroll-behavior:smooth;scroll-padding-top:72px}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 var(--body);overflow-x:clip;-webkit-font-smoothing:antialiased}
 body::after{content:"";position:fixed;inset:0;pointer-events:none;background:var(--grain);opacity:.2;mix-blend-mode:multiply;z-index:100}
-@media (prefers-color-scheme:dark){body::after{mix-blend-mode:screen;opacity:.07}}
+
 a{color:inherit}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--verveine);outline-offset:3px;border-radius:6px}
