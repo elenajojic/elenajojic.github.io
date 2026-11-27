@@ -3,7 +3,14 @@
 Plain HTML, CSS and JS. No build step, no framework, hosted free on GitHub Pages.
 
 ## Editing
-Almost everything (projects, experience, courses, hobbies, links) lives in **`content.js`**. Edit, commit, push. The site updates in about a minute.
+All the text lives in **`content.js`**:
+1. Open `content.js` on github.com and click the pencil icon.
+2. Change the text inside the "quotes".
+3. Click **Commit changes**. The site updates in about a minute.
+
+To add a project, job or course, copy an existing `{ ... }` block, paste it below, and edit it. Keep the commas between blocks.
+
+To swap your photo, upload a new `assets/elena.png` with the background removed.
 
 ## To finish
 1. **Photo:** add a cutout of yourself (background removed, PNG) at `assets/elena.png`. The site turns it into the grey halftone automatically.
@@ -26,4 +33,4 @@ Then tick **Enforce HTTPS** under Settings → Pages.
 ## Extras
 - Press **S** (or the Spec view button) for blueprint mode with measurements.
 - ← → keys flip through project folders.
-- Fonts are self-hosted in `assets/fonts` (Unbounded, Instrument Sans, Instrument Serif, IBM Plex Mono; all open source).
+- Fonts are self-hosted in `assets/fonts`. The name uses Feeling Passionate by Din Studio (personal use license); the rest are open source.

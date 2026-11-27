@@ -224,9 +224,9 @@ function placeholder(w, h) {
 }
 function drawHalftone() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
-  const dpr = Math.min(devicePixelRatio || 1, 2);
+  const dpr = Math.max(2, Math.min((devicePixelRatio || 1) * 1.5, 3));
   cv.width = W * dpr; cv.height = H * dpr;
-  const step = Math.round(Math.max(4, W / 115) * dpr);
+  const step = Math.max(3, Math.round(W / 175 * dpr));
   const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;

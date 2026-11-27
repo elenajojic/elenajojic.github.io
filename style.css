@@ -5,7 +5,7 @@ PICTURE: huge wide name with a grey halftone cutout over it; blueprint sketches 
 COLOUR and TYPE: Brume, Menthe, Limonade, Verveine on grain; deep teal ink. Unbounded, Instrument Sans, Instrument Serif italic, IBM Plex Mono.
 LAYOUT: poster hero, horizontal folder cabinet, about band, experience list, course cards, tiles, contact band.
 */
-@font-face{font-family:"Signature December";src:url(assets/fonts/signature-december.woff2) format("woff2");font-display:swap}
+@font-face{font-family:"Feeling Passionate";src:url(assets/fonts/feeling-passionate.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"Unbounded";src:url(assets/fonts/unbounded-latin-800-normal.woff2) format("woff2");font-weight:800;font-display:swap}
 @font-face{font-family:"Unbounded";src:url(assets/fonts/unbounded-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
 @font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
@@ -56,7 +56,7 @@ button{font:inherit;color:inherit}
   background:radial-gradient(60% 55% at 100% 0%,var(--verveine) 0%,transparent 70%),radial-gradient(55% 60% at 0% 100%,var(--menthe) 0%,transparent 70%),
   radial-gradient(40% 40% at 90% 100%,var(--brume) 0%,transparent 70%),radial-gradient(45% 45% at 10% 5%,var(--limonade) 0%,transparent 70%),var(--bg)}
 .hero-meta{display:flex;justify-content:space-between;gap:12px;font:500 13px var(--mono);color:var(--soft);position:relative;z-index:3}
-.bigname{margin:clamp(70px,8vw,120px) 0 0;font:400 clamp(64px,10.5vw,170px)/1 "Signature December",cursive;color:var(--name);letter-spacing:0;position:relative;z-index:1;text-align:center;white-space:nowrap}
+.bigname{margin:clamp(30px,4vw,70px) 0 0;font:400 clamp(90px,17vw,290px)/1 "Feeling Passionate",cursive;color:var(--name);letter-spacing:0;position:relative;z-index:1;text-align:center;white-space:nowrap}
 .bigname span.w1,.bigname span.w2{display:inline;text-align:inherit}
 .bigname .w2{margin-left:.25em}
 .bigname span{display:block}
@@ -67,7 +67,7 @@ button{font:inherit;color:inherit}
 .hero-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .hero-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:8px;background:var(--paper);border:1px solid var(--line);text-decoration:none;font:500 13px var(--mono)}
 .hero-links a:hover{background:var(--ink);color:var(--bg)}
-.cutout{position:absolute;z-index:2;left:50%;bottom:0;transform:translateX(-50%);width:clamp(300px,44vw,640px);aspect-ratio:900/1064}
+.cutout{position:absolute;z-index:2;left:50%;bottom:0;transform:translateX(-50%);width:clamp(260px,36vw,500px);aspect-ratio:3/4}
 .cutout canvas{width:100%;height:100%;display:block}
 .sticky{position:absolute;right:-30%;top:22%;background:var(--paper);color:var(--deep);font:500 12px/1.5 var(--mono);padding:10px 12px;border:1px dashed var(--deep);border-radius:6px}
 .hero-foot{position:absolute;left:max(4vw,16px);right:max(4vw,16px);bottom:24px;display:flex;gap:16px;align-items:end;z-index:3;font-size:15px}
@@ -264,7 +264,7 @@ body.specview [data-spec]{outline:1px dashed var(--menthe);outline-offset:6px;po
   .bigname{font-size:24vw;margin-top:30px;white-space:normal;line-height:.95}
   .bigname span.w1,.bigname span.w2{display:block;width:max-content}
   .bigname .w2{margin:0 0 0 auto}
-  .bigname{margin:64px 0 .95em}
+  .bigname{margin:48px 0 .4em}
   .lede{position:static;margin:22px 0 0;max-width:none}
   .cutout{position:relative;left:auto;transform:none;margin:20px auto 0;width:72vw}
   .sticky{right:-6%;top:auto;bottom:12%}

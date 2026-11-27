@@ -1,7 +1,17 @@
 /* ==========================================================
    EVERYTHING ON THE SITE LIVES HERE.
-   Edit text in this file, save, push to GitHub. That's it.
-   Set any link to "" to hide it.
+
+   HOW TO EDIT (on github.com):
+   1. Open this file in your repo and click the pencil icon.
+   2. Change only the text inside "quotes".
+   3. Click "Commit changes". The site updates in about a minute.
+
+   RULES SO NOTHING BREAKS:
+   - Keep the quotes and the comma at the end of each line.
+   - If your text has a " in it, write it as \" instead.
+   - To hide a link, make it empty: ""
+   - To add a project / job / course, copy an existing { ... },
+     paste it right below, and change the text.
    ========================================================== */
 
 window.SITE = {
