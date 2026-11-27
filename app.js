@@ -210,7 +210,8 @@ function drawHalftone() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
   const dpr = Math.min(devicePixelRatio || 1, 2);
   cv.width = W * dpr; cv.height = H * dpr;
-  const step = Math.max(4, Math.round(W / 85)) * dpr;
+  const step = Math.round(Math.max(3, W / 115) * dpr);
+  const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
   const o = off.getContext("2d");
@@ -226,13 +227,13 @@ function drawHalftone() {
   bx.fillStyle = getComputedStyle(document.body).backgroundColor; bx.fillRect(0, 0, back.width, back.height);
   ctx.drawImage(back, 0, 0);
   ctx.fillStyle = matchMedia("(prefers-color-scheme: dark)").matches ? "#cfd6d4" : "#3b4241";
-  for (let y = 0, row = 0; y < cv.height; y += step * .866, row++) {
+  for (let y = 0, row = 0; y < cv.height; y += rowStep, row++) {
     for (let x = (row % 2) * step / 2; x < cv.width; x += step) {
       const i = ((Math.floor(y) * cv.width) + Math.floor(x)) * 4;
       const a = data[i + 3] / 255; if (a < .1) continue;
       const lum = (data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114) / 255;
       const d = Math.min(1, Math.max(0, (1 - lum - .04) / .82));
-      const r = step * .52 * Math.sqrt(d) * a + step * .05;
+      const r = step * .56 * Math.sqrt(d) * a + step * .05;
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     }
   }
