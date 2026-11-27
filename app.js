@@ -4,6 +4,23 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
+/* ---------- loading intro: counter, then curtain lifts ---------- */
+const loaderEl = document.getElementById("loader");
+const loaderDone = new Promise(resolve => {
+  const skip = matchMedia("(prefers-reduced-motion: reduce)").matches || (() => { try { return sessionStorage.getItem("seenIntro"); } catch { return null; } })();
+  if (skip || !loaderEl) { loaderEl?.remove(); document.documentElement.classList.add("loaded"); return resolve(); }
+  try { sessionStorage.setItem("seenIntro", "1"); } catch {}
+  const num = loaderEl.querySelector(".ld-num"), bar = loaderEl.querySelector(".ld-bar i"), t0 = performance.now(), dur = 1300;
+  const tick = now => {
+    const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    num.textContent = String(Math.round(e * 100)).padStart(2, "0"); bar.style.transform = `scaleX(${e})`;
+    if (p < 1) return requestAnimationFrame(tick);
+    loaderEl.classList.add("lift"); document.documentElement.classList.add("loaded");
+    setTimeout(resolve, 350); setTimeout(() => loaderEl.remove(), 1200);
+  };
+  requestAnimationFrame(tick);
+});
+
 /* ---------- text fill ---------- */
 $("#first").textContent = S.first;
 $("#last").textContent = S.last;
@@ -225,7 +242,7 @@ function placeholder(w, h) {
 /* Dots are computed once (prepare), then redrawn cheaply (render) so they can
    build in on load and react to the cursor. */
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
+let scatter = 0, dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
 const mouse = { x: -1e4, y: -1e4, active: false };
 function prepare() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
@@ -252,7 +269,7 @@ function prepare() {
       const al = data[i + 3] / 255; if (al < .1) continue;
       const lum = (data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114) / 255;
       const d = Math.min(1, Math.max(0, (1 - lum - .04) / .82));
-      dots.push(x, y, step * .56 * Math.sqrt(d) * al + step * .05);
+      dots.push(x, y, step * .56 * Math.sqrt(d) * al + step * .05, Math.random());
     }
   }
   render();
@@ -261,12 +278,20 @@ function render() {
   if (!dots) return;
   const Wc = cv.width, Hc = cv.height;
   ctx.clearRect(0, 0, Wc, Hc);
-  ctx.globalAlpha = Math.min(1, intro * 1.5); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
+  ctx.globalAlpha = Math.min(1, intro * 1.5) * (1 - Math.min(1, scatter * 1.6)); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
   ctx.fillStyle = "#3b4241";
   const R = 85 * dpr, mx = mouse.x * dpr, my = mouse.y * dpr, live = mouse.active;
   ctx.beginPath();
-  for (let k = 0; k < dots.length; k += 3) {
+  for (let k = 0; k < dots.length; k += 4) {
     let x = dots[k], y = dots[k + 1], r = dots[k + 2];
+    if (scatter > 0) { // dots break apart and float up as the hero scrolls away
+      const sd = dots[k + 3], ang = sd * 6.283;
+      const s2 = scatter * scatter;
+      x += Math.cos(ang) * s2 * Wc * (.03 + sd * .1);
+      y -= s2 * Hc * (.04 + sd * .22) - Math.sin(ang) * s2 * Hc * .03;
+      r *= 1 - Math.min(1, scatter * (.4 + sd * .9));
+      if (r < .25) continue;
+    }
     if (intro < 1) { // dots grow in, top to bottom
       const t = Math.min(1, Math.max(0, intro * 1.8 - (y / Hc) * .8));
       r *= 1 - Math.pow(1 - t, 3);
@@ -304,7 +329,7 @@ img.onload = () => { src = img; prepare(); };
 img.onerror = () => { $("#photoNote").hidden = false; prepare(); };
 img.src = S.photo;
 let started = false;
-const roH = new ResizeObserver(() => { prepare(); if (!started && dots) { started = true; playIntro(); } }); roH.observe(cv);
+const roH = new ResizeObserver(() => { prepare(); if (!started && dots) { started = true; loaderDone.then(playIntro); } }); roH.observe(cv);
 
 /* ---------- fit signature name to width ---------- */
 const nameEl = $(".bigname");
@@ -320,7 +345,7 @@ function fitName() {
 addEventListener("resize", fitName);
 
 /* ---------- name paints in ---------- */
-(document.fonts?.ready || Promise.resolve()).then(() => nameEl.classList.add("painted"));
+Promise.all([document.fonts?.ready, loaderDone]).then(() => nameEl.classList.add("painted"));
 
 /* ---------- reveal on scroll ---------- */
 const revealTargets = $$(".sec-head, .cabinet, .about-grid > *, .acad > *, .lead, .log li, .tile, .contact-band .inner > *, .skills-row > div");
@@ -359,5 +384,50 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
     ring.style.transform = `translate(${rx}px,${ry}px)`;
     requestAnimationFrame(follow);
   })();
+}
+
+/* ---------- headings: words rise out of a mask ---------- */
+$$(".h").forEach(h => {
+  h.innerHTML = h.textContent.split(" ").map((w, i) => `<span class="wm"><span style="transition-delay:${i * 70}ms">${esc(w)}</span></span>`).join(" ");
+  h.classList.add("split");
+});
+const hio = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("up"); hio.unobserve(e.target); } }), { threshold: .4 });
+$$(".h.split").forEach(h => hio.observe(h));
+
+/* ---------- folders fly in one after another ---------- */
+const cabIO = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { cab.classList.add("dealt"); cabIO.disconnect(); } }), { threshold: .2 });
+folders.forEach((f, i) => f.style.setProperty("--d", i * 80 + "ms"));
+cab.classList.add("deal"); cabIO.observe(cab);
+
+/* ---------- scroll-linked: dots scatter, name splits, marquee follows scroll ---------- */
+const track = $(".mq-track"), w1 = $(".bigname .w1"), w2 = $(".bigname .w2");
+let lastY = scrollY, vel = 0, mqX = 0;
+function onFrame() {
+  const y = scrollY, hh = heroEl.offsetHeight;
+  vel += ((y - lastY) - vel) * .2; lastY = y;
+  if (!reduceMotion) {
+    const p = Math.min(1, Math.max(0, y / hh));
+    if (Math.abs(p - scatter) > .001) { scatter = p; if (dots) render(); }
+    if (innerWidth > 760) { w1.style.transform = `translateX(${-p * 18}vw)`; w2.style.transform = `translateX(${p * 18}vw)`; }
+    if (track) {
+      mqX -= .6 + Math.min(14, Math.abs(vel) * .35) * Math.sign(vel || 1);
+      const half = track.scrollWidth / 2; if (half) { mqX %= half; if (mqX > 0) mqX -= half; }
+      track.style.transform = `translateX(${mqX}px)`;
+    }
+  }
+  requestAnimationFrame(onFrame);
+}
+requestAnimationFrame(onFrame);
+
+/* ---------- magnetic buttons ---------- */
+if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
+  $$(".hero-links a, .btn, .copy, .contact-list a, .mail").forEach(el => {
+    el.classList.add("mag");
+    el.addEventListener("pointermove", e => {
+      const b = el.getBoundingClientRect();
+      el.style.transform = `translate(${(e.clientX - b.left - b.width / 2) * .3}px, ${(e.clientY - b.top - b.height / 2) * .4}px)`;
+    });
+    el.addEventListener("pointerleave", () => el.style.transform = "");
+  });
 }
 }
