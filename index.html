@@ -15,11 +15,20 @@
 <body>
 
 <header class="top">
-  <a class="brand" href="#top">Elena Jojic</a>
-  <nav class="nav" aria-label="Sections">
-    <a href="#intro">Intro</a><a href="#academics">Academics</a><a href="#work">Projects</a><a href="#leadership">Leadership</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
-  </nav>
-  <button id="specBtn" class="spec-btn" aria-pressed="false" title="Toggle spec view (press S)">Spec view</button>
+  <div class="top-row">
+    <a class="brand" href="#top">Elena Jojic</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#intro">Intro</a><a href="#academics">Academics</a><a href="#work">Projects</a><a href="#leadership">Leadership</a><a href="#experience">Experience</a><a href="#contact">Contact</a>
+    </nav>
+    <button class="term-btn" id="termBtn" aria-label="Open command line (press /)" title="Command line ( / )">&gt;_</button>
+  </div>
+  <div class="statusbar">
+    <span class="sb hide-sm">[ <span id="sbNow"></span> <i class="live"></i> ]</span>
+    <span class="sb hide-sm">[ <span id="sbCount"></span> ON FILE ]</span>
+    <span class="sb-gap"></span>
+    <button class="sb sb-btn" id="audioBtn">[ AUDIO_LOG ♪ ]</button>
+    <button id="specBtn" class="sb sb-btn" aria-pressed="false" title="Toggle spec view (press S)">[ SPEC_VIEW ]</button>
+  </div>
 </header>
 
 <main id="top">
@@ -51,7 +60,7 @@
   <section id="intro" class="band about">
     <div class="about-grid">
       <div>
-        <p class="num-label">I.</p>
+        <p class="num-label">// 01_INTRODUCTION</p>
         <h2 class="h">Introduction</h2>
         <div id="introText" class="about-text"></div>
       </div>
@@ -66,7 +75,7 @@
 
   <section id="academics" class="band">
     <div class="sec-head">
-      <div><p class="num-label">II.</p><h2 class="h">Academic record</h2></div>
+      <div><p class="num-label">// 02_ACADEMIC_RECORD</p><h2 class="h">Academic record</h2></div>
     </div>
     <div class="acad">
       <div class="acad-side">
@@ -85,7 +94,7 @@
 
   <section id="work" class="band">
     <div class="sec-head">
-      <div><p class="num-label">III.</p><h2 class="h">Projects & research</h2></div>
+      <div><p class="num-label">// 03_PROJECTS</p><h2 class="h">Projects & research</h2></div>
       <span class="count" id="projCount"></span>
     </div>
     <div class="cabinet" id="cabinet" data-spec="cabinet"></div>
@@ -97,7 +106,7 @@
   <section id="leadership" class="band lead-band">
     <div class="inner">
       <div class="sec-head">
-        <div><p class="num-label">IV.</p><h2 class="h">Leadership</h2></div>
+        <div><p class="num-label">// 04_LEADERSHIP</p><h2 class="h">Leadership</h2></div>
       </div>
       <div id="leadGrid" class="lead-grid" data-spec="leadership"></div>
     </div>
@@ -105,7 +114,7 @@
 
   <section id="experience" class="band">
     <div class="sec-head">
-      <div><p class="num-label">V.</p><h2 class="h">Experience</h2></div>
+      <div><p class="num-label">// 05_EXPERIENCE</p><h2 class="h">Experience</h2></div>
       <div class="filters" role="group" aria-label="Filter experience">
         <button class="chip on" data-f="all">All</button>
         <button class="chip" data-f="eng">Engineering</button>
@@ -122,7 +131,7 @@
 
   <section class="band">
     <div class="sec-head">
-      <div><p class="num-label">VI.</p><h2 class="h">Outside engineering</h2></div>
+      <div><p class="num-label">// 06_OFF_DUTY</p><h2 class="h">Outside engineering</h2></div>
     </div>
     <div id="board" class="tiles" data-spec="hobbies"></div>
   </section>
@@ -139,9 +148,17 @@
 </main>
 
 <footer class="foot">
-  <span>© <span id="yr"></span> Elena Jojic</span>
-  <span>Ann Arbor, Michigan</span>
+  <span>© <span id="yr"></span> Elena Jojic // Ann Arbor, MI</span>
+  <span class="hide-sm">// This site sets no cookies. Nothing tracks you.</span>
+  <a href="#top">[ BACK_TO_TOP ↑ ]</a>
 </footer>
+
+<dialog id="term" class="term" aria-label="Command line">
+  <form class="term-inner" id="termForm" method="dialog">
+    <div class="term-out" id="termOut" aria-live="polite"></div>
+    <label class="term-line"><span>elena@umich:~$</span><input id="termIn" autocomplete="off" spellcheck="false" aria-label="Command"></label>
+  </form>
+</dialog>
 
 <dialog id="island" class="island" aria-labelledby="isTitle">
   <div class="is-inner">

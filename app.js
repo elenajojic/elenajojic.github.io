@@ -90,6 +90,7 @@ cab.innerHTML = S.projects.map((p, i) => {
     <button class="spine" tabindex="-1" aria-hidden="true"><span>${esc(p.code)} / ${esc(p.short)}</span></button>
     <div class="f-body" id="fb${i}">
       <div>
+        <p class="f-strip">// FILE_${esc(p.code)} &nbsp;// STATUS: ${/now/i.test(p.when) ? "ACTIVE" : /1st/i.test(p.team) ? "AWARDED" : "ON FILE"}</p>
         <h3 class="f-title">${esc(p.title)}</h3>
         <p class="f-team">${esc(p.team)}</p>
         <table class="spec"><tr><th>ROLE</th><td>${esc(p.role)}</td></tr><tr><th>WHEN</th><td>${esc(p.when)}</td></tr><tr><th>TOOLS</th><td>${p.tools.map(esc).join(" · ")}</td></tr></table>
@@ -131,7 +132,7 @@ openFolder(0);
 
 /* ---------- experience log ---------- */
 $("#logList").innerHTML = S.experience.map(x => `<li data-tags="${x.tags.join(" ")}">
-  <span class="when">${esc(x.when)}</span>
+  <span class="when">// ${esc(x.when)}</span>
   <div><h3>${esc(x.title)}</h3><span class="org">${esc(x.org)}</span><p>${esc(x.note)}</p></div>
   <span class="tg">${x.tags.map(t => `<i>${esc(t)}</i>`).join("")}</span></li>`).join("");
 function filterGroup(btnSel, attr, items, match) {
@@ -196,7 +197,7 @@ function toggleSpec(on) {
   document.body.classList.toggle("specview", on);
   specBtn.setAttribute("aria-pressed", on);
   refreshSpec();
-  if (on) toast("Spec view: dimensions in px");
+  if (on) toast("// SPEC_VIEW: dimensions in px");
 }
 specBtn.addEventListener("click", () => toggleSpec(!document.body.classList.contains("specview")));
 addEventListener("keydown", e => {
@@ -231,7 +232,7 @@ function prepare() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
   dpr = Math.max(2, Math.min((devicePixelRatio || 1) * 1.5, 3));
   cv.width = W * dpr; cv.height = H * dpr;
-  step = Math.max(3, Math.round(W / 175 * dpr));
+  step = Math.max(4, Math.round(W / 175 * dpr));
   const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
@@ -360,4 +361,52 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
     requestAnimationFrame(follow);
   })();
 }
+
+/* ---------- status bar ---------- */
+$("#sbNow").textContent = ("Currently // " + S.now).toUpperCase();
+$("#sbCount").textContent = `${S.projects.length} PROJECTS`;
+const musicIdx = S.hobbies.findIndex(h => /music/i.test(h.label));
+$("#audioBtn").addEventListener("click", () => $(`.tile[data-h="${Math.max(0, musicIdx)}"]`).click());
+
+/* ---------- active section in nav ---------- */
+const navLinks = $$(".nav a");
+const spy = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  navLinks.forEach(l => l.classList.toggle("on", l.getAttribute("href") === "#" + e.target.id));
+}), { rootMargin: "-45% 0px -50% 0px" });
+navLinks.forEach(l => { const t = $(l.getAttribute("href")); if (t) spy.observe(t); });
+
+/* ---------- command line ---------- */
+const term = $("#term"), tin = $("#termIn"), tout = $("#termOut");
+const say = (html, cls = "") => { tout.insertAdjacentHTML("beforeend", `<p class="${cls}">${html}</p>`); tout.scrollTop = tout.scrollHeight; };
+const go = id => { term.close(); setTimeout(() => $(id).scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }), 60); return "jumping to " + id.slice(1) + "..."; };
+const open = url => { window.open(url, "_blank", "noopener"); return "opening " + esc(url.replace(/^https?:\/\/(www\.)?|^mailto:/g, "")) + "..."; };
+const CMDS = {
+  help: () => "commands: <b>ls</b> <b>about</b> <b>academics</b> <b>projects</b> <b>leadership</b> <b>experience</b> <b>contact</b> <b>email</b> <b>linkedin</b> <b>github</b> <b>music</b> <b>spec</b> <b>whoami</b> <b>clear</b> <b>exit</b>",
+  whoami: () => esc(`${S.first} ${S.last} // ${S.degree} // ${S.minors}`),
+  about: () => go("#intro"), intro: () => go("#intro"), academics: () => go("#academics"),
+  projects: () => go("#work"), work: () => go("#work"), ls: () => S.projects.map(p => esc(`${p.code}  ${p.title}`)).join("<br>"),
+  leadership: () => go("#leadership"), experience: () => go("#experience"), contact: () => go("#contact"),
+  email: () => open("mailto:" + S.email), linkedin: () => open(S.linkedin), github: () => open(S.github),
+  music: () => { term.close(); $("#audioBtn").click(); return "playing audio_log..."; },
+  spec: () => { term.close(); $("#specBtn").click(); return "toggled spec view"; },
+  clear: () => { tout.innerHTML = ""; return ""; }, exit: () => { term.close(); return ""; }
+};
+function openTerm() {
+  if (!tout.innerHTML) say(`welcome to ${esc(S.first.toLowerCase())}'s portfolio. type <b>help</b> to see commands.`, "dim");
+  term.showModal(); tin.focus();
+}
+$("#termBtn").addEventListener("click", openTerm);
+$("#termForm").addEventListener("submit", e => {
+  e.preventDefault();
+  const raw = tin.value.trim(); tin.value = ""; if (!raw) return;
+  say(`<span class="ps">elena@umich:~$</span> ${esc(raw)}`);
+  const fn = CMDS[raw.toLowerCase().split(/\s+/)[0]];
+  const out = fn ? fn() : `command not found: ${esc(raw)}. try <b>help</b>`;
+  if (out) say(out, fn ? "" : "err");
+});
+term.addEventListener("click", e => { if (e.target === term) term.close(); });
+addEventListener("keydown", e => {
+  if (e.key === "/" && !/input|textarea/i.test(e.target.tagName) && !term.open) { e.preventDefault(); openTerm(); }
+});
 }
