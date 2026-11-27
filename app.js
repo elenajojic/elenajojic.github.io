@@ -8,17 +8,25 @@ const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": 
 $("#first").textContent = S.first;
 $("#last").textContent = S.last;
 $("#roleLine").textContent = S.role;
-$("#lede").textContent = S.lede;
-$("#pull").textContent = S.pull;
-$("#projCount").textContent = `${S.projects.length} projects`;
-$("#tagline").textContent = S.tagline;
+$("#degreeLine").textContent = S.degree;
+$("#minorLine").textContent = S.minors;
+$("#degree2").textContent = S.degree;
+$("#minor2").textContent = S.minors;
 $("#nowLine").textContent = S.now;
-$("#schoolLine").textContent = S.school;
 $("#yr").textContent = new Date().getFullYear();
-$("#aboutText").innerHTML = S.about.map(p => `<p>${esc(p)}</p>`).join("");
+$("#projCount").textContent = `${S.projects.length} projects`;
+const links = [["Email", S.email && "mailto:" + S.email], ["LinkedIn", S.linkedin], ["GitHub", S.github], ["Resume", S.resumePdf]].filter(l => l[1]);
+$("#heroLinks").innerHTML = links.map(([t, h]) => `<a href="${esc(h)}" ${h.startsWith("mailto") ? "" : 'target="_blank" rel="noopener"'}>${esc(t)}</a>`).join("");
+$("#introText").innerHTML = S.intro.map(p => `<p>${esc(p)}</p>`).join("");
+$("#interests").innerHTML = S.interests.map(t => `<span>${esc(t)}</span>`).join("");
+$("#roles").innerHTML = S.roles.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join("");
+$("#honors").innerHTML = S.honors.map(([a, b]) => `<li><b>${esc(a)}</b> ${esc(b)}</li>`).join("");
+$("#courseRows").innerHTML = S.courses.map(c => `<tr class="${c.status === "next" ? "next" : ""}"><td class="mono">${esc(c.code)}</td><td>${esc(c.name)}</td><td>${esc(c.area)}</td><td>${c.status === "next" ? '<span class="pill">Up next</span>' : "Completed"}</td></tr>`).join("");
+$("#leadGrid").innerHTML = S.leadership.map(l => `<article class="lead">
+  <p class="lead-when">${esc(l.when)}</p><h3>${esc(l.title)}</h3><p class="lead-org">${esc(l.org)}</p><p>${esc(l.text)}</p>
+  <div class="tg">${l.tags.map(t => `<i>${esc(t)}</i>`).join("")}</div></article>`).join("");
 $("#skills").innerHTML = Object.entries(S.skills).map(([g, list]) =>
-  `<p class="grp">${esc(g)}</p><div class="tags">${list.map(t => `<span>${esc(t)}</span>`).join("")}</div>`).join("");
-$("#awards").innerHTML = S.awards.map(([a, b]) => `<li><b>${esc(a)}</b><span>${esc(b)}</span></li>`).join("");
+  `<div><p class="grp">${esc(g)}</p><div class="tags">${list.map(t => `<span>${esc(t)}</span>`).join("")}</div></div>`).join("");
 const rb = $("#resumeBtn");
 if (S.resumePdf) rb.href = S.resumePdf; else $("#resumeRow").hidden = true;
 
@@ -136,11 +144,6 @@ function filterGroup(btnSel, attr, items, match) {
 }
 filterGroup("[data-f]", "f", () => $$("#logList li"), (li, f) => li.dataset.tags.split(" ").includes(f));
 
-/* ---------- courses ---------- */
-$("#courseGrid").innerHTML = S.courses.map(c => `<div class="ccard ${c.status === "next" ? "next" : ""}" data-tag="${esc(c.tag)}">
-  <div class="code">${esc(c.code)}</div><div class="cname">${esc(c.name)}</div></div>`).join("");
-filterGroup("[data-c]", "c", () => $$("#courseGrid .ccard"), (el, f) => el.dataset.tag === f);
-
 /* ---------- hobbies ---------- */
 const TC = ["#C2F2E4", "#EDF7BE", "#35C8B4", "#A4CF4A"];
 $("#board").innerHTML = S.hobbies.map((h, i) => `<div class="tile ${h.img ? "has-img" : ""}" style="--tc:${TC[i % TC.length]}">
@@ -207,7 +210,7 @@ function drawHalftone() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
   const dpr = Math.min(devicePixelRatio || 1, 2);
   cv.width = W * dpr; cv.height = H * dpr;
-  const step = Math.max(5, Math.round(W / 70)) * dpr;
+  const step = Math.max(4, Math.round(W / 85)) * dpr;
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
   const o = off.getContext("2d");
@@ -218,13 +221,18 @@ function drawHalftone() {
   try { data = o.getImageData(0, 0, cv.width, cv.height).data; }
   catch { ctx.clearRect(0, 0, cv.width, cv.height); ctx.filter = "grayscale(1) contrast(1.3)"; ctx.drawImage(off, 0, 0); return; }
   ctx.clearRect(0, 0, cv.width, cv.height);
+  const back = document.createElement("canvas"); back.width = cv.width; back.height = cv.height;
+  const bx = back.getContext("2d"); bx.drawImage(off, 0, 0); bx.globalCompositeOperation = "source-in";
+  bx.fillStyle = getComputedStyle(document.body).backgroundColor; bx.fillRect(0, 0, back.width, back.height);
+  ctx.drawImage(back, 0, 0);
   ctx.fillStyle = matchMedia("(prefers-color-scheme: dark)").matches ? "#cfd6d4" : "#3b4241";
   for (let y = 0, row = 0; y < cv.height; y += step * .866, row++) {
     for (let x = (row % 2) * step / 2; x < cv.width; x += step) {
       const i = ((Math.floor(y) * cv.width) + Math.floor(x)) * 4;
       const a = data[i + 3] / 255; if (a < .1) continue;
       const lum = (data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114) / 255;
-      const r = (1 - lum) * step * .62 * a + step * .06;
+      const d = Math.min(1, Math.max(0, (1 - lum - .04) / .82));
+      const r = step * .52 * Math.sqrt(d) * a + step * .05;
       ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
     }
   }

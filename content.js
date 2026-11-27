@@ -5,32 +5,56 @@
    ========================================================== */
 
 window.SITE = {
-  name: "Elena Jojic",
   first: "elena",
   last: "jojic",
   role: "Robotics Engineering · University of Michigan",
-  tagline: "Robotics (Perception) · Business minor · Premed",
-  school: "Class of 2029",
-  now: "building lunar hardware with CLAWS",
+  degree: "B.S.E. Robotics, expected May 2029",
+  minors: "Perception concentration · Business minor · Premed",
+  now: "Hardware Engineer, CLAWS",
 
   email: "elenajojic7@gmail.com",
-  linkedin: "",      // e.g. "https://www.linkedin.com/in/your-handle"
+  linkedin: "https://www.linkedin.com/in/elenajojic/",
   github: "https://github.com/elenajojic",
   resumePdf: "",     // put your PDF in assets/ then set: "assets/Elena_Jojic_Resume.pdf"
-
-  // Your cutout photo (background removed) goes in assets/ with this name.
   photo: "assets/elena.png",
 
-  lede: "I build robots that borrow from animals.",
-  pull: "Nature already solved a lot of hard mechanical problems. I want to borrow its answers.",
-  about: [
-    "I'm a Robotics student at the University of Michigan, concentrating in Perception, with a Business minor and a premed track alongside.",
-    "My focus is bio-inspired mechanisms: squid arms, crab pincers, cockroach legs, and how they can shape prosthetics, suits, and the tools people use every day.",
-    "I learn by building. Right now that means lunar hardware with CLAWS, wire-bending and legged robots in the BIRDS Lab, and adaptive tools for people with cerebral palsy.",
-    "Before engineering I did Model UN and debate, so presenting and pitching are some of my favorite parts of a project."
+  /* ---------- INTRODUCTION ---------- */
+  intro: [
+    "Hi, I'm Elena! I'm a robotics engineering student at the University of Michigan. This site collects the projects, research, and teams I've been part of so far.",
+    "I'm most interested in how engineering can help people move, heal, and live more independently. A lot of my work borrows from biology: how animals grip, walk, and adapt, and how those ideas could shape prosthetics, wearable suits, and assistive devices.",
+    "None of this happens alone. I've been lucky to build with amazing teammates and mentors in the BIRDS Lab, CLAWS, and M-Heal, and I'm grateful for every one of them."
+  ],
+  interests: ["Bio-inspired robotics", "Prosthetics & assistive devices", "Robot perception", "Space hardware", "Medicine & healthcare"],
+  roles: [
+    ["Hardware Engineer", "CLAWS (NASA SUITS & Micro-g NExT)"],
+    ["Lab Manager", "BIRDS Lab, University of Michigan"],
+    ["Exam Writing Lead", "UMSO"]
   ],
 
-  /* ---------- PROJECTS (the file folders) ---------- */
+  /* ---------- ACADEMIC RECORD ---------- */
+  honors: [
+    ["MHacks 2026", "1st place, Relay Track"],
+    ["USA Biology Olympiad", "Semifinalist, 2023 & 2024"],
+    ["Biology Department Award", "International Academy, 2025"]
+  ],
+  // status: "done" or "next"
+  courses: [
+    { code: "ROB", name: "Robotics", area: "Engineering", status: "done" },
+    { code: "ENGR", name: "Engineering Programming", area: "Engineering", status: "done" },
+    { code: "MATH 116", name: "Calculus II", area: "Math", status: "done" },
+    { code: "MATH 215", name: "Multivariable Calculus", area: "Math", status: "done" },
+    { code: "MATH", name: "Honors Mathematics", area: "Math", status: "done" },
+    { code: "PHYSICS 140", name: "General Physics I (Mechanics)", area: "Physics", status: "done" },
+    { code: "PHYSICS 141", name: "Elementary Laboratory I", area: "Physics", status: "done" },
+    { code: "PHYSICS", name: "Biophysics I", area: "Physics", status: "done" },
+    { code: "PHYSICS", name: "Physics II + Lab", area: "Physics", status: "done" },
+    { code: "CHEM 210", name: "Organic Chemistry I", area: "Chemistry", status: "done" },
+    { code: "EARTH", name: "Oceanography", area: "Science", status: "done" },
+    { code: "CHEM 215", name: "Organic Chemistry II", area: "Chemistry", status: "next" },
+    { code: "CHEM 216", name: "Organic Chemistry Lab", area: "Chemistry", status: "next" }
+  ],
+
+  /* ---------- PROJECTS & RESEARCH (the file folders) ---------- */
   projects: [
     {
       code: "001", short: "LAMS", title: "Lunar Adjustable Mast Stand",
@@ -38,21 +62,19 @@ window.SITE = {
       when: "Sep 2026 → now", tools: ["Onshape", "FEA", "Test planning"],
       stat: ["6.1 m", "mast height"],
       points: [
-        "Designing a hand-cranked tripod with a self-locking worm gear that raises a rollable composite mast to 6.1 m, lighting astronaut work zones on the Moon.",
-        "Ran crank torque, tip-over, mast buckling and Onshape FEA analyses.",
-        "Wrote the safety test plan for NASA's Neutral Buoyancy Lab."
+        "Astronauts on the Moon need reliable light where they work. I'm designing a hand-cranked tripod with a self-locking worm gear that raises a rollable composite mast to 6.1 m to light their work zones.",
+        "I ran the crank torque, tip-over, mast buckling, and Onshape FEA analyses, and wrote the safety test plan for testing at NASA's Neutral Buoyancy Lab."
       ],
       fig: "mast", link: ""
     },
     {
       code: "002", short: "MESHBOT", title: "MeshBOT",
-      team: "BIRDS Lab · University of Michigan", role: "Founder, Lab Manager & Lead Mechanical Engineer",
+      team: "BIRDS Lab · University of Michigan", role: "Founder & Lead Mechanical Engineer",
       when: "Jan 2026 → Sep 2026", tools: ["Autodesk Inventor", "Capstan drives", "Laser cutting"],
-      stat: ["1", "continuous wire"],
+      stat: ["8", "person team"],
       points: [
-        "Started and led an 8 person team building a robot that bends one continuous metal wire into 3D wireframe structures.",
-        "Rebuilt the wire rotator around a new motor and capstan drive, and took the wire bender through multiple Inventor revisions.",
-        "Built the zip tie joining mechanism for connecting the frame."
+        "I started MeshBOT and led an 8 person team building a robot that bends a single continuous metal wire into 3D wireframe structures.",
+        "I rebuilt the wire rotator around a new motor and capstan drive, took the wire bender through multiple Inventor revisions, and built the zip tie mechanism for joining the frame. Huge thanks to the team for every late night in the lab."
       ],
       fig: "wire", link: ""
     },
@@ -60,10 +82,10 @@ window.SITE = {
       code: "003", short: "MU-ROAM", title: "Multilegged Robots",
       team: "Mu-RoAM · BIRDS Lab", role: "Mechanical Engineer",
       when: "2026", tools: ["CAD", "Fabrication", "Bio-inspired design"],
-      stat: ["6", "legs, cockroach style"],
+      stat: ["6", "legs"],
       points: [
-        "Designed and assembled multilegged robots that turn principles of animal locomotion into working hardware.",
-        "Current focus: cockroach locomotion, and what its gait can teach a robot about rough terrain."
+        "In the Multilegged Robots and Animal Motion group, I design and assemble robots that turn principles of animal locomotion into working hardware.",
+        "Right now we're studying cockroach locomotion, which is how I got hooked on bio-inspired design in the first place."
       ],
       fig: "legs", link: ""
     },
@@ -73,20 +95,19 @@ window.SITE = {
       when: "Sep 2025 → Sep 2026", tools: ["CAD", "Ergonomics", "User testing"],
       stat: ["CP", "inclusive design"],
       points: [
-        "Designed and prototyped adaptive spoons, plates and daily-use tools in CAD for people with cerebral palsy.",
-        "Refined every prototype with engineers, designers and healthcare stakeholders based on what users actually needed."
+        "I led the design team building adaptive spoons, plates, and daily-use tools for people with cerebral palsy, with a focus on usability and ergonomics.",
+        "Every prototype went through rounds of feedback with engineers, designers, and healthcare stakeholders, and the best changes always came from what users actually told us."
       ],
       fig: "spoon", link: ""
     },
     {
       code: "005", short: "AMYNA", title: "Amyna",
-      team: "MHacks 2026 · 1st place, Relay Track", role: "Built the phone-calling agent",
-      when: "Fall 2026", tools: ["AI agents", "Voice calling", "Hackathon speed"],
-      stat: ["1st", "place, first hackathon"],
+      team: "MHacks 2026 · 1st place, Relay Track", role: "Phone agent developer",
+      when: "Fall 2026", tools: ["AI agents", "Voice calling", "Rapid prototyping"],
+      stat: ["1st", "place"],
       points: [
-        "An AI agent that calls insurance companies and disputes denied medical claims for patients.",
-        "I built the piece that actually places and handles the phone calls.",
-        "It was my first hackathon."
+        "Amyna is an AI agent that calls insurance companies and disputes denied medical claims on behalf of patients.",
+        "I built the part that places and handles the phone calls. It was my first hackathon, and winning the Relay Track with this team was a highlight of my year."
       ],
       fig: "phone", link: ""
     },
@@ -94,37 +115,51 @@ window.SITE = {
       code: "006", short: "JUKEBOX", title: "Earth Jukebox",
       team: "NASA Space Apps 2026 · Earth Information Jukebox", role: "Concept, sound & UX",
       when: "Fall 2026", tools: ["Spatial audio", "Accessibility", "UI/UX"],
-      stat: ["♪", "data you can hear"],
+      stat: ["♪", "sonified data"],
       points: [
-        "An accessible spatial-audio map of NASA Earth data: you hear the planet instead of only reading it.",
-        "Includes a guess-the-sound game and a voice guide, designed accessibility first."
+        "An accessible spatial-audio map of NASA Earth data, so you can hear what's happening on the planet instead of only reading charts.",
+        "It includes a guess-the-sound game and a voice guide, and was designed accessibility first."
       ],
       fig: "sound", link: ""
     },
     {
       code: "007", short: "ATLAS", title: "Atlas Planner",
-      team: "Personal tool", role: "Solo builder",
+      team: "Personal project", role: "Solo builder",
       when: "Fall 2026", tools: ["Claude connector", "Render", "Neon Postgres"],
-      stat: ["18", "credits, optimized"],
+      stat: ["18", "credits planned"],
       points: [
-        "A hosted Claude connector for UMich's Atlas course data that plans my schedule from what I've taken, my goals, instructor ratings, time of day and total workload.",
-        "Log in once with UMich, then plan registration from any chat."
+        "A hosted connector for UMich's Atlas course data that plans my schedule from the classes I've taken, my goals, instructor ratings, time of day, and total workload.",
+        "I log in once with UMich and can plan registration from any chat."
       ],
       fig: "grid", link: "https://github.com/elenajojic/atlas-planner"
     }
   ],
 
+  /* ---------- LEADERSHIP ---------- */
+  leadership: [
+    { title: "Founder & Lab Manager", org: "MeshBOT, BIRDS Lab", when: "2026",
+      text: "Started the MeshBOT project and grew it to an 8 person team. As lab manager I answer questions, keep lab chores on track, and handle the laser cutter.",
+      tags: ["Team building", "Lab operations"] },
+    { title: "Tech & Design Team Lead", org: "M-Heal, CEPEA", when: "2025 → 2026",
+      text: "Led the design team creating adaptive tools for people with cerebral palsy, coordinating between engineers, designers, and healthcare partners.",
+      tags: ["Inclusive design", "Stakeholders"] },
+    { title: "Exam Writing Lead", org: "UMSO", when: "2026",
+      text: "Run a group of exam writers for UMSO and Regionals tests, with checkpoint meetings and written feedback on every exam.",
+      tags: ["Mentoring", "Science Olympiad"] },
+    { title: "Captain", org: "Science Olympiad, International Academy", when: "2023 → 2025",
+      text: "Captained one of the largest teams, led recruitment and training, and wrote practice tests. We placed 3rd at States in 2024.",
+      tags: ["Recruiting", "Training"] }
+  ],
+
   /* ---------- EXPERIENCE (filterable log) ---------- */
-  // tags: eng, research, health, lead
+  // tags: eng, research, health
   experience: [
     { when: "Sep 2026 → now", title: "Hardware Engineer", org: "CLAWS, NASA Micro-g NExT & SUITS", tags: ["eng"],
       note: "Lunar mast stand design, analysis and NBL safety test plan." },
-    { when: "Jan 2026 → Sep 2026", title: "Lab Manager & Lead Mechanical Engineer", org: "MeshBOT, BIRDS Lab, University of Michigan", tags: ["eng", "lead"],
-      note: "Founded and led an 8 person wire-bending robot team; multilegged robots." },
-    { when: "Sep 2025 → Sep 2026", title: "Tech & Design Team Lead", org: "M-Heal, CEPEA", tags: ["eng", "health", "lead"],
+    { when: "Jan 2026 → Sep 2026", title: "Lab Manager & Lead Mechanical Engineer", org: "MeshBOT, BIRDS Lab, University of Michigan", tags: ["eng", "research"],
+      note: "Wire-bending robot and multilegged robots." },
+    { when: "Sep 2025 → Sep 2026", title: "Tech & Design Team Lead", org: "M-Heal, CEPEA", tags: ["eng", "health"],
       note: "Adaptive tools for people with cerebral palsy." },
-    { when: "Fall 2026", title: "Exam Writing Lead", org: "UMSO (Michigan Science Olympiad)", tags: ["lead"],
-      note: "Run a group of exam writers for UMSO and Regionals tests: checkpoints, feedback, deadlines." },
     { when: "Sep 2024 → Apr 2025", title: "Research Assistant", org: "Anesthesiology, John D. Dingell VA Medical Center", tags: ["research", "health"],
       note: "Sustainable anesthesia: less nitrous oxide, less medication waste, pre-filled syringes." },
     { when: "Oct 2024 → Dec 2024", title: "Research Assistant", org: "Anesthesia, John D. Dingell VA Medical Center", tags: ["research", "health"],
@@ -143,46 +178,17 @@ window.SITE = {
       note: "Medicaid redetermination data during COVID-19; helped patients re-enroll." }
   ],
 
-  awards: [
-    ["MHacks 2026", "1st place, Relay Track (Amyna)"],
-    ["USA Biology Olympiad", "Semifinalist, 2023 & 2024"],
-    ["Biology Department Award", "International Academy, 2025"],
-    ["Science Olympiad", "Captain; 3rd at States 2024"]
-  ],
-
   skills: {
     "Design & CAD": ["Onshape", "Autodesk Inventor", "3D modeling", "FEA", "Laser cutting", "Rapid prototyping"],
     "Build & code": ["C++", "Circuits & electronics", "AI agents", "Test planning"],
-    "People": ["Team leadership", "Pitching & public speaking", "Graphic design", "Clinical exposure"]
+    "People": ["Team leadership", "Public speaking", "Graphic design", "Clinical exposure"]
   },
 
-  /* ---------- COURSEWORK (index cards) ---------- */
-  // status: "done" or "next"
-  courses: [
-    { code: "ROB", name: "Robotics", tag: "core", status: "done" },
-    { code: "ENGR", name: "Engineering Programming", tag: "core", status: "done" },
-    { code: "MATH 116", name: "Calculus II", tag: "math", status: "done" },
-    { code: "MATH 215", name: "Multivariable Calculus", tag: "math", status: "done" },
-    { code: "HONORS", name: "Honors Mathematics", tag: "math", status: "done" },
-    { code: "PHYSICS 140", name: "Mechanics", tag: "physics", status: "done" },
-    { code: "PHYSICS 141", name: "Mechanics Lab", tag: "physics", status: "done" },
-    { code: "BIOPHYS", name: "Biophysics I", tag: "physics", status: "done" },
-    { code: "PHYSICS", name: "Physics II + Lab", tag: "physics", status: "done" },
-    { code: "CHEM 210", name: "Organic Chemistry I", tag: "bio", status: "done" },
-    { code: "EARTH", name: "Oceanography", tag: "bio", status: "done" },
-    { code: "CHEM 215", name: "Organic Chemistry II", tag: "bio", status: "next" },
-    { code: "CHEM 216", name: "Organic Chemistry Lab", tag: "bio", status: "next" }
-  ],
-
-  /* ---------- HOBBIES (photo tiles) ---------- */
-  // add img: "assets/squirrel.jpg" to show a real photo
+  /* ---------- OUTSIDE ENGINEERING ---------- */
+  // add img: "assets/yourphoto.jpg" to show a real photo
   hobbies: [
-    { label: "squirrel photography", note: "campus squirrels, sometimes by drone", icon: "squirrel", img: "" },
-    { label: "skydiving", note: "Albania, age 11", icon: "chute", img: "" },
-    { label: "DJing", note: "", icon: "deck", img: "" },
-    { label: "piano + clarinet", note: "", icon: "keys", img: "" },
-    { label: "basketball", note: "", icon: "ball", img: "" },
-    { label: "logo design", note: "for practically every club I'm in", icon: "pen", img: "" },
-    { label: "matcha", note: "", icon: "cup", img: "" }
+    { label: "DJing", note: "", img: "" },
+    { label: "Piano & clarinet", note: "", img: "" },
+    { label: "Basketball", note: "", img: "" }
   ]
 };
