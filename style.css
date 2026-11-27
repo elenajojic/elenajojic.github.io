@@ -190,6 +190,26 @@ button{font:inherit;color:inherit}
 .toast{visibility:hidden;position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);background:var(--deep);color:var(--limonade);padding:12px 20px;border-radius:10px;font:500 13px var(--mono);z-index:70;transition:transform .35s;max-width:90vw;text-align:center}
 .toast.show{visibility:visible;transform:translate(-50%,0)}
 
+/* motion */
+.bigname{clip-path:inset(-20% 100% -40% -5%)}
+.bigname.painted{animation:paint 1.5s .15s cubic-bezier(.65,0,.25,1) forwards}
+@keyframes paint{to{clip-path:inset(-20% -5% -40% -5%)}}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.marquee{overflow:hidden;background:var(--deep);color:var(--brume);padding:18px 0;border-block:1px solid rgba(194,242,228,.15)}
+.mq-track{display:flex;width:max-content;align-items:center;gap:28px;animation:mq 45s linear infinite}
+.marquee:hover .mq-track{animation-play-state:paused}
+.mq-track span{font:500 clamp(18px,2vw,26px) var(--display);letter-spacing:-.03em;white-space:nowrap}
+.mq-track i{font-style:normal;color:var(--verveine)}
+@keyframes mq{to{transform:translateX(-50%)}}
+.folder:not(.open):hover{transform:translateY(-8px)}
+.folder{transition:flex-grow .55s cubic-bezier(.6,.1,.2,1),flex-basis .55s cubic-bezier(.6,.1,.2,1),transform .25s}
+.lead{transition:transform .3s,box-shadow .3s}
+.lead:hover{transform:translateY(-5px) rotate(-.4deg);box-shadow:0 16px 34px rgba(14,58,53,.14)}
+.hero-links a{transition:transform .2s,background .2s,color .2s}
+.hero-links a:hover{transform:translateY(-2px)}
+@media (prefers-reduced-motion:reduce){.bigname{clip-path:none}.rv{opacity:1;transform:none}}
+
 /* island */
 .island{border:0;padding:0;background:transparent;max-width:none;max-height:none;overflow:visible}
 .island::backdrop{background:rgba(6,30,27,.45);backdrop-filter:blur(8px)}

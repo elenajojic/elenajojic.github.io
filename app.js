@@ -222,11 +222,16 @@ function placeholder(w, h) {
   g.fillStyle = "#333"; g.beginPath(); g.ellipse(w * .5, h * .24, w * .25, h * .1, 0, Math.PI, 0); g.fill();
   return o;
 }
-function drawHalftone() {
+/* Dots are computed once (prepare), then redrawn cheaply (render) so they can
+   build in on load and react to the cursor. */
+const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
+const mouse = { x: -1e4, y: -1e4, active: false };
+function prepare() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
-  const dpr = Math.max(2, Math.min((devicePixelRatio || 1) * 1.5, 3));
+  dpr = Math.max(2, Math.min((devicePixelRatio || 1) * 1.5, 3));
   cv.width = W * dpr; cv.height = H * dpr;
-  const step = Math.max(3, Math.round(W / 175 * dpr));
+  step = Math.max(3, Math.round(W / 175 * dpr));
   const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
@@ -236,29 +241,70 @@ function drawHalftone() {
   o.drawImage(s, (cv.width - sw * sc) / 2, cv.height - sh * sc, sw * sc, sh * sc);
   let data;
   try { data = o.getImageData(0, 0, cv.width, cv.height).data; }
-  catch { ctx.clearRect(0, 0, cv.width, cv.height); ctx.filter = "grayscale(1) contrast(1.3)"; ctx.drawImage(off, 0, 0); return; }
-  ctx.clearRect(0, 0, cv.width, cv.height);
-  const back = document.createElement("canvas"); back.width = cv.width; back.height = cv.height;
+  catch { dots = null; ctx.filter = "grayscale(1) contrast(1.3)"; ctx.drawImage(off, 0, 0); return; }
+  back = document.createElement("canvas"); back.width = cv.width; back.height = cv.height;
   const bx = back.getContext("2d"); bx.drawImage(off, 0, 0); bx.globalCompositeOperation = "source-in";
   bx.fillStyle = getComputedStyle(document.body).backgroundColor; bx.fillRect(0, 0, back.width, back.height);
-  ctx.drawImage(back, 0, 0);
-  ctx.fillStyle = matchMedia("(prefers-color-scheme: dark)").matches ? "#cfd6d4" : "#3b4241";
+  dots = [];
   for (let y = 0, row = 0; y < cv.height; y += rowStep, row++) {
     for (let x = (row % 2) * step / 2; x < cv.width; x += step) {
       const i = ((Math.floor(y) * cv.width) + Math.floor(x)) * 4;
-      const a = data[i + 3] / 255; if (a < .1) continue;
+      const al = data[i + 3] / 255; if (al < .1) continue;
       const lum = (data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114) / 255;
       const d = Math.min(1, Math.max(0, (1 - lum - .04) / .82));
-      const r = step * .56 * Math.sqrt(d) * a + step * .05;
-      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+      dots.push(x, y, step * .56 * Math.sqrt(d) * al + step * .05);
     }
   }
+  render();
+}
+function render() {
+  if (!dots) return;
+  const Wc = cv.width, Hc = cv.height;
+  ctx.clearRect(0, 0, Wc, Hc);
+  ctx.globalAlpha = Math.min(1, intro * 1.5); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
+  ctx.fillStyle = matchMedia("(prefers-color-scheme: dark)").matches ? "#cfd6d4" : "#3b4241";
+  const R = 85 * dpr, mx = mouse.x * dpr, my = mouse.y * dpr, live = mouse.active;
+  ctx.beginPath();
+  for (let k = 0; k < dots.length; k += 3) {
+    let x = dots[k], y = dots[k + 1], r = dots[k + 2];
+    if (intro < 1) { // dots grow in, top to bottom
+      const t = Math.min(1, Math.max(0, intro * 1.8 - (y / Hc) * .8));
+      r *= 1 - Math.pow(1 - t, 3);
+      if (r < .2) continue;
+    }
+    if (live) { // ripple: dots near the cursor drift outward
+      const dx = x - mx, dy = y - my, dist2 = dx * dx + dy * dy;
+      if (dist2 < R * R) {
+        const dist = Math.sqrt(dist2) || 1, f = 1 - dist / R, e = f * f * (3 - 2 * f);
+        x += dx / dist * e * step * 1.6; y += dy / dist * e * step * 1.6;
+      }
+    }
+    ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, Math.PI * 2);
+  }
+  ctx.fill();
+}
+let raf = 0;
+const queue = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; render(); }); };
+function playIntro() {
+  if (reduceMotion) { intro = 1; render(); return; }
+  const t0 = performance.now();
+  const tick = now => { intro = Math.min(1, (now - t0) / 1600); render(); if (intro < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+const heroEl = $(".hero");
+if (!reduceMotion && matchMedia("(hover: hover)").matches) {
+  heroEl.addEventListener("pointermove", e => {
+    const b = cv.getBoundingClientRect();
+    mouse.x = e.clientX - b.left; mouse.y = e.clientY - b.top; mouse.active = true; queue();
+  });
+  heroEl.addEventListener("pointerleave", () => { mouse.active = false; queue(); });
 }
 const img = new Image();
-img.onload = () => { src = img; drawHalftone(); };
-img.onerror = () => { $("#photoNote").hidden = false; drawHalftone(); };
+img.onload = () => { src = img; prepare(); };
+img.onerror = () => { $("#photoNote").hidden = false; prepare(); };
 img.src = S.photo;
-const roH = new ResizeObserver(() => drawHalftone()); roH.observe(cv);
+let started = false;
+const roH = new ResizeObserver(() => { prepare(); if (!started && dots) { started = true; playIntro(); } }); roH.observe(cv);
 
 /* ---------- fit signature name to width ---------- */
 const nameEl = $(".bigname");
@@ -272,4 +318,20 @@ function fitName() {
 }
 (document.fonts?.ready || Promise.resolve()).then(fitName);
 addEventListener("resize", fitName);
+
+/* ---------- name paints in ---------- */
+(document.fonts?.ready || Promise.resolve()).then(() => nameEl.classList.add("painted"));
+
+/* ---------- reveal on scroll ---------- */
+const revealTargets = $$(".sec-head, .cabinet, .about-grid > *, .acad > *, .lead, .log li, .tile, .contact-band .inner > *, .skills-row > div");
+revealTargets.forEach(el => el.classList.add("rv"));
+$$(".lead, .tile, .skills-row > div").forEach((el, i) => el.style.transitionDelay = (i % 4) * 90 + "ms");
+$$(".log li").forEach((el, i) => el.style.transitionDelay = Math.min(i, 6) * 50 + "ms");
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12, rootMargin: "0px 0px -40px 0px" });
+revealTargets.forEach(el => io.observe(el));
+
+/* ---------- skills marquee ---------- */
+const words = [...S.interests, ...Object.values(S.skills).flat()];
+const run = words.map(w => `<span>${esc(w)}</span><i aria-hidden="true">✦</i>`).join("");
+$("#marquee").innerHTML = `<div class="mq-track">${run}${run}</div>`;
 }
