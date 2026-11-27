@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Elena Jojic · Portfolio</title>
+<meta name="description" content="Elena Jojic: robotics engineer at the University of Michigan. Projects, resume, coursework and more.">
+<meta property="og:title" content="Elena Jojic · Robotics Engineer">
+<meta property="og:description" content="Bio-inspired robots, lunar hardware, adaptive tools. Come look through the files.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2335C8B4'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' font-family='Georgia' font-weight='700' fill='%23EDF7BE'%3Eej%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cherry+Bomb+One&family=Reenie+Beanie&family=Space+Mono:wght@400;700&family=Hanken+Grotesk:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="brand" href="#top">ELENA JOJIC <span>★</span> <em id="roleLine"></em></a>
+  <nav class="nav scroll" aria-label="Sections">
+    <a href="#files">work</a><a href="#about">about</a><a href="#log">experience</a><a href="#courses">courses</a><a href="#play">off hours</a><a href="#contact">contact</a>
+  </nav>
+  <button id="specBtn" class="spec-btn" aria-pressed="false" title="Toggle spec view (press S)">⌗ spec view</button>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero" data-spec="hero">
+    <p class="hand h1">hi. since you're new here,</p>
+    <p class="hand h2">let me be ya tour guide <span class="arrow">↘</span></p>
+    <p class="hand h3">this is</p>
+    <h1 class="bigname" aria-label="Elena Jojic">
+      <span class="w1" id="first"></span>
+      <span class="w2" id="last"></span>
+    </h1>
+    <div class="cutout" data-spec="photo">
+      <canvas id="halftone" aria-label="Halftone portrait of Elena"></canvas>
+      <div class="sticky" id="photoNote" hidden>drop your cutout photo in<br><b>assets/elena.png</b><br>and I'll halftone it ✿</div>
+    </div>
+    <div class="hero-foot">
+      <p id="tagline"></p>
+      <p class="now"><span class="dot"></span> currently <span id="nowLine"></span></p>
+      <p id="schoolLine" class="right"></p>
+    </div>
+  </section>
+
+  <!-- PROJECT FILES -->
+  <section id="files" class="band files-band">
+    <div class="sec-head">
+      <h2 class="bubble">the files</h2>
+      <p class="hand side">pull a folder open ↓</p>
+    </div>
+    <div class="cabinet" id="cabinet" data-spec="cabinet"></div>
+    <p class="hint">Tip: use ← → keys to flip through folders.</p>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="band about">
+    <div class="about-grid">
+      <div>
+        <h2 class="bubble">about me</h2>
+        <p class="whom">( wait, who? )</p>
+        <div id="aboutText" class="about-text"></div>
+      </div>
+      <aside class="card skills" data-spec="skills">
+        <h3>Toolbox</h3>
+        <div id="skills"></div>
+        <h3>Awards</h3>
+        <ul id="awards" class="awards"></ul>
+      </aside>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE LOG -->
+  <section id="log" class="band log-band">
+    <div class="sec-head">
+      <h2 class="bubble">archive log</h2>
+      <div class="filters" role="group" aria-label="Filter experience">
+        <button class="chip on" data-f="all">all</button>
+        <button class="chip" data-f="eng">engineering</button>
+        <button class="chip" data-f="research">research</button>
+        <button class="chip" data-f="health">healthcare</button>
+        <button class="chip" data-f="lead">leadership</button>
+      </div>
+    </div>
+    <ol id="logList" class="log" data-spec="log"></ol>
+    <div class="resume-row">
+      <a class="btn" id="resumeBtn" href="#" target="_blank" rel="noopener">open my resume (PDF) ↗</a>
+      <span class="hand">or just keep scrolling, it's all here</span>
+    </div>
+  </section>
+
+  <!-- COURSES -->
+  <section id="courses" class="band courses-band">
+    <div class="sec-head">
+      <h2 class="bubble">coursework</h2>
+      <div class="filters" role="group" aria-label="Filter courses">
+        <button class="chip on" data-c="all">all</button>
+        <button class="chip" data-c="core">engineering</button>
+        <button class="chip" data-c="math">math</button>
+        <button class="chip" data-c="physics">physics</button>
+        <button class="chip" data-c="bio">bio & chem</button>
+      </div>
+    </div>
+    <div id="courseGrid" class="cards" data-spec="courses"></div>
+  </section>
+
+  <!-- HOBBIES -->
+  <section id="play" class="band play-band">
+    <div class="sec-head">
+      <h2 class="bubble">off hours</h2>
+      <p class="hand side">go ahead, move them around</p>
+    </div>
+    <div id="board" class="board" data-spec="board"></div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="band wrap-band">
+    <div class="envelope" data-spec="envelope">
+      <div class="letter">
+        <p class="hand">Thanks for looking through my files! If you're building something that moves, helps people heal, or leaves the planet, I'd love to hear about it.</p>
+        <p class="hand sig">♡ Elena</p>
+      </div>
+      <div class="flap"></div>
+    </div>
+    <div class="wrap-text">
+      <h2 class="wrap-big">and that's<br>a wrap.</h2>
+      <ul class="contact-list" id="contactList"></ul>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>© <span id="yr"></span> Elena Jojic. Powered by matcha.</span>
+  <span id="squirrelCount" class="sq-count" hidden></span>
+</footer>
+
+<button id="squirrel" class="squirrel" aria-label="A squirrel! Click it" hidden>
+  <svg viewBox="0 0 80 70" aria-hidden="true"><path d="M52 58c14-2 22-14 20-28C70 16 58 6 46 10c10 4 14 14 10 22-3 6-9 8-14 6" fill="#8a6a4b"/><path d="M50 30c9 12 16 18 22 18" fill="none" stroke="#6e5238" stroke-width="2"/><ellipse cx="32" cy="46" rx="16" ry="14" fill="#9b7a58"/><circle cx="20" cy="30" r="10" fill="#9b7a58"/><path d="M16 21l2-8 5 7z" fill="#9b7a58"/><circle cx="16" cy="29" r="1.8" fill="#1a1a1a"/><circle cx="10.5" cy="32" r="1.4" fill="#3a2a1a"/><ellipse cx="26" cy="52" rx="5" ry="3" fill="#7d5d40"/><ellipse cx="40" cy="58" rx="7" ry="3" fill="#7d5d40"/></svg>
+</button>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
