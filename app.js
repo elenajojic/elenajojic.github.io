@@ -144,12 +144,28 @@ function filterGroup(btnSel, attr, items, match) {
 }
 filterGroup("[data-f]", "f", () => $$("#logList li"), (li, f) => li.dataset.tags.split(" ").includes(f));
 
-/* ---------- hobbies ---------- */
-const TC = ["#C2F2E4", "#EDF7BE", "#35C8B4", "#A4CF4A"];
-$("#board").innerHTML = S.hobbies.map((h, i) => `<div class="tile ${h.img ? "has-img" : ""}" style="--tc:${TC[i % TC.length]}">
-  ${h.img ? `<img src="${esc(h.img)}" alt="${esc(h.label)}" loading="lazy">` : ""}
-  <span class="num">${String(i + 1).padStart(2, "0")}</span>
-  <div class="cap">${esc(h.label)}</div>${h.note ? `<div class="sub">${esc(h.note)}</div>` : ""}</div>`).join("");
+/* ---------- hobbies + island ---------- */
+const TC = ["#35C8B4", "#A4CF4A", "#C2F2E4", "#EDF7BE"];
+$("#board").innerHTML = S.hobbies.map((h, i) => `<button class="tile ${h.img ? "has-img" : ""}" style="--tc:${TC[i % TC.length]}" data-h="${i}" aria-haspopup="dialog">
+  ${h.img ? `<img src="${esc(h.img)}" alt="" loading="lazy">` : ""}
+  <span class="num">${String(i + 1).padStart(2, "0")}</span><span class="open-ic" aria-hidden="true">↗</span>
+  <span class="cap">${esc(h.label)}</span>${h.note ? `<span class="sub">${esc(h.note)}</span>` : ""}</button>`).join("");
+const island = $("#island");
+$$(".tile").forEach(t => t.addEventListener("click", () => {
+  const h = S.hobbies[+t.dataset.h];
+  $("#isKicker").textContent = `Outside engineering · ${String(+t.dataset.h + 1).padStart(2, "0")}`;
+  $("#isTitle").textContent = h.label;
+  $("#isText").textContent = h.detail || h.note || "";
+  $("#isArt").hidden = !/music/i.test(h.label);
+  const L = $("#isLink");
+  if (h.link && h.link.url) { L.hidden = false; L.href = h.link.url; L.textContent = h.link.label + " ↗"; } else L.hidden = true;
+  island.style.setProperty("--tc", t.style.getPropertyValue("--tc"));
+  if (island.showModal) island.showModal(); else island.setAttribute("open", "");
+}));
+const closeIsland = () => { island.classList.add("closing"); setTimeout(() => { island.classList.remove("closing"); island.close?.(); island.removeAttribute("open"); }, 220); };
+$("#isClose").addEventListener("click", closeIsland);
+island.addEventListener("click", e => { if (e.target === island) closeIsland(); });
+island.addEventListener("cancel", e => { e.preventDefault(); closeIsland(); });
 
 /* ---------- contact ---------- */
 const mb = $("#mailBig"); mb.textContent = S.email; mb.href = "mailto:" + S.email;
@@ -210,7 +226,7 @@ function drawHalftone() {
   const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
   const dpr = Math.min(devicePixelRatio || 1, 2);
   cv.width = W * dpr; cv.height = H * dpr;
-  const step = Math.round(Math.max(3, W / 115) * dpr);
+  const step = Math.round(Math.max(4, W / 115) * dpr);
   const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
@@ -243,4 +259,17 @@ img.onload = () => { src = img; drawHalftone(); };
 img.onerror = () => { $("#photoNote").hidden = false; drawHalftone(); };
 img.src = S.photo;
 const roH = new ResizeObserver(() => drawHalftone()); roH.observe(cv);
+
+/* ---------- fit signature name to width ---------- */
+const nameEl = $(".bigname");
+function fitName() {
+  nameEl.style.fontSize = "";
+  const spans = $$("span", nameEl), avail = nameEl.clientWidth * .96;
+  const widths = innerWidth <= 760 ? spans.map(s => s.getBoundingClientRect().width)
+    : [spans[1].getBoundingClientRect().right - spans[0].getBoundingClientRect().left];
+  const w = Math.max(...widths);
+  if (w > avail) nameEl.style.fontSize = parseFloat(getComputedStyle(nameEl).fontSize) * avail / w + "px";
+}
+(document.fonts?.ready || Promise.resolve()).then(fitName);
+addEventListener("resize", fitName);
 }

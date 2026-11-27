@@ -5,11 +5,11 @@
    ========================================================== */
 
 window.SITE = {
-  first: "elena",
-  last: "jojic",
+  first: "Elena",
+  last: "Jojic",
   role: "Robotics Engineering · University of Michigan",
-  degree: "B.S.E. Robotics, expected May 2029",
-  minors: "Perception concentration · Business minor · Premed",
+  degree: "Major in Robotics, Perception concentration",
+  minors: "Minor in Business · Premed track",
   now: "Hardware Engineer, CLAWS",
 
   email: "elenajojic7@gmail.com",
@@ -187,8 +187,11 @@ window.SITE = {
   /* ---------- OUTSIDE ENGINEERING ---------- */
   // add img: "assets/yourphoto.jpg" to show a real photo
   hobbies: [
-    { label: "DJing", note: "", img: "" },
-    { label: "Piano & clarinet", note: "", img: "" },
-    { label: "Basketball", note: "", img: "" }
+    { label: "Music", note: "DJing, piano & clarinet", img: "",
+      detail: "Music is my reset button. I DJ, play piano, and play clarinet, and I'm always building new playlists.",
+      link: { label: "Listen on Spotify", url: "" } },   // paste your Spotify profile or playlist link
+    { label: "Basketball", note: "", img: "",
+      detail: "Basketball is how I unplug after a long day in the lab.",
+      link: { label: "", url: "" } }
   ]
 };

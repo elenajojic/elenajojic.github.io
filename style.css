@@ -5,6 +5,7 @@ PICTURE: huge wide name with a grey halftone cutout over it; blueprint sketches 
 COLOUR and TYPE: Brume, Menthe, Limonade, Verveine on grain; deep teal ink. Unbounded, Instrument Sans, Instrument Serif italic, IBM Plex Mono.
 LAYOUT: poster hero, horizontal folder cabinet, about band, experience list, course cards, tiles, contact band.
 */
+@font-face{font-family:"Signature December";src:url(assets/fonts/signature-december.woff2) format("woff2");font-display:swap}
 @font-face{font-family:"Unbounded";src:url(assets/fonts/unbounded-latin-800-normal.woff2) format("woff2");font-weight:800;font-display:swap}
 @font-face{font-family:"Unbounded";src:url(assets/fonts/unbounded-latin-500-normal.woff2) format("woff2");font-weight:500;font-display:swap}
 @font-face{font-family:"Instrument Sans";src:url(assets/fonts/instrument-sans-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
@@ -55,7 +56,9 @@ button{font:inherit;color:inherit}
   background:radial-gradient(60% 55% at 100% 0%,var(--verveine) 0%,transparent 70%),radial-gradient(55% 60% at 0% 100%,var(--menthe) 0%,transparent 70%),
   radial-gradient(40% 40% at 90% 100%,var(--brume) 0%,transparent 70%),radial-gradient(45% 45% at 10% 5%,var(--limonade) 0%,transparent 70%),var(--bg)}
 .hero-meta{display:flex;justify-content:space-between;gap:12px;font:500 13px var(--mono);color:var(--soft);position:relative;z-index:3}
-.bigname{margin:clamp(40px,6vw,80px) 0 0;font:800 clamp(84px,17vw,270px)/.82 var(--display);color:var(--name);letter-spacing:-.06em;position:relative;z-index:1}
+.bigname{margin:clamp(70px,8vw,120px) 0 0;font:400 clamp(64px,10.5vw,170px)/1 "Signature December",cursive;color:var(--name);letter-spacing:0;position:relative;z-index:1;text-align:center;white-space:nowrap}
+.bigname span.w1,.bigname span.w2{display:inline;text-align:inherit}
+.bigname .w2{margin-left:.25em}
 .bigname span{display:block}
 .bigname .w2{text-align:right}
 .lede{position:absolute;z-index:3;left:max(4vw,16px);top:60%;max-width:30ch}
@@ -64,7 +67,7 @@ button{font:inherit;color:inherit}
 .hero-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .hero-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:8px;background:var(--paper);border:1px solid var(--line);text-decoration:none;font:500 13px var(--mono)}
 .hero-links a:hover{background:var(--ink);color:var(--bg)}
-.cutout{position:absolute;z-index:2;left:50%;bottom:0;transform:translateX(-50%);width:clamp(240px,33vw,460px);aspect-ratio:3/4}
+.cutout{position:absolute;z-index:2;left:50%;bottom:0;transform:translateX(-50%);width:clamp(300px,44vw,640px);aspect-ratio:900/1064}
 .cutout canvas{width:100%;height:100%;display:block}
 .sticky{position:absolute;right:-30%;top:22%;background:var(--paper);color:var(--deep);font:500 12px/1.5 var(--mono);padding:10px 12px;border:1px dashed var(--deep);border-radius:6px}
 .hero-foot{position:absolute;left:max(4vw,16px);right:max(4vw,16px);bottom:24px;display:flex;gap:16px;align-items:end;z-index:3;font-size:15px}
@@ -159,15 +162,18 @@ button{font:inherit;color:inherit}
 .ccard[hidden]{display:none}
 
 /* hobbies */
-.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:900px}
-.tile{aspect-ratio:1}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:720px}
+.tile{aspect-ratio:4/3;border:0;font:inherit;text-align:left;cursor:pointer;transition:transform .25s,box-shadow .25s}
+.tile:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(14,58,53,.18)}
+.tile .open-ic{position:absolute;top:10px;right:14px;font-size:18px;z-index:1}
+.tile .cap,.tile .sub{display:block}
 .tile{position:relative;aspect-ratio:4/5;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;color:var(--deep);background:var(--tc)}
 .tile::before{content:"";position:absolute;inset:0;background:var(--grain);opacity:.22;mix-blend-mode:multiply}
 .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.1)}
 .tile.has-img{color:#fff}
 .tile.has-img::after{content:"";position:absolute;inset:40% 0 0;background:linear-gradient(transparent,rgba(0,0,0,.65))}
 .tile .num{position:absolute;top:12px;left:14px;font:500 11px var(--mono);z-index:1}
-.tile .cap{position:relative;z-index:1;font:500 18px/1.1 var(--display);letter-spacing:-.03em}
+.tile .cap{position:relative;z-index:1;font:500 clamp(22px,2.4vw,30px)/1.1 var(--display);letter-spacing:-.03em}
 .tile .sub{position:relative;z-index:1;font-size:13px;margin-top:4px;opacity:.8}
 
 /* contact */
@@ -183,6 +189,26 @@ button{font:inherit;color:inherit}
 
 .toast{visibility:hidden;position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);background:var(--deep);color:var(--limonade);padding:12px 20px;border-radius:10px;font:500 13px var(--mono);z-index:70;transition:transform .35s;max-width:90vw;text-align:center}
 .toast.show{visibility:visible;transform:translate(-50%,0)}
+
+/* island */
+.island{border:0;padding:0;background:transparent;max-width:none;max-height:none;overflow:visible}
+.island::backdrop{background:rgba(6,30,27,.45);backdrop-filter:blur(8px)}
+.is-inner{position:relative;width:min(420px,88vw);background:#0B1F1C;color:#EDF7BE;border-radius:36px;padding:34px 30px 30px;text-align:center;
+  box-shadow:0 30px 80px rgba(0,0,0,.45),inset 0 0 0 1px rgba(194,242,228,.12);animation:islandIn .5s cubic-bezier(.2,1.3,.4,1) both;transform-origin:center}
+.island.closing .is-inner{animation:islandOut .22s ease-in both}
+@keyframes islandIn{0%{clip-path:inset(42% 30% 42% 30% round 40px);opacity:.4}100%{clip-path:inset(0 0 0 0 round 36px);opacity:1}}
+@keyframes islandOut{to{clip-path:inset(42% 30% 42% 30% round 40px);opacity:0}}
+.is-close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:50%;border:0;background:rgba(194,242,228,.12);color:#C2F2E4;cursor:pointer;font-size:14px}
+.is-kicker{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--tc,#35C8B4);margin:6px 0 10px}
+.island h3{font:500 34px/1 var(--display);letter-spacing:-.04em;margin:0 0 12px;color:#fff}
+.island p{margin:0 auto 22px;max-width:30ch;color:#C2F2E4}
+.is-art{display:flex;justify-content:center;align-items:end;gap:5px;height:44px;margin-bottom:12px}
+.is-art span{width:6px;border-radius:3px;background:var(--tc,#35C8B4);animation:eq 1s ease-in-out infinite}
+.is-art span:nth-child(1){height:40%;animation-delay:-.2s}.is-art span:nth-child(2){height:90%;animation-delay:-.5s}.is-art span:nth-child(3){height:60%;animation-delay:-.1s}.is-art span:nth-child(4){height:100%;animation-delay:-.7s}.is-art span:nth-child(5){height:50%;animation-delay:-.35s}
+@keyframes eq{50%{transform:scaleY(.35)}}
+.is-art span{transform-origin:bottom}
+.is-link{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:0 22px;border-radius:99px;background:#1DB954;color:#04140f;font-weight:600;text-decoration:none}
+.is-link:hover{filter:brightness(1.08)}
 
 /* spec view */
 body.specview{background-image:linear-gradient(rgba(53,200,180,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(53,200,180,.16) 1px,transparent 1px);background-size:24px 24px}
@@ -235,7 +261,10 @@ body.specview [data-spec]{outline:1px dashed var(--menthe);outline-offset:6px;po
   .spec-btn{margin-left:auto}
   .nav{order:3;width:100%;margin-left:-12px}
   .hero{min-height:auto;padding-bottom:0}
-  .bigname{font-size:23vw;margin-top:28px}
+  .bigname{font-size:24vw;margin-top:30px;white-space:normal;line-height:.95}
+  .bigname span.w1,.bigname span.w2{display:block;width:max-content}
+  .bigname .w2{margin:0 0 0 auto}
+  .bigname{margin:64px 0 .95em}
   .lede{position:static;margin:22px 0 0;max-width:none}
   .cutout{position:relative;left:auto;transform:none;margin:20px auto 0;width:72vw}
   .sticky{right:-6%;top:auto;bottom:12%}
@@ -252,9 +281,10 @@ body.specview [data-spec]{outline:1px dashed var(--menthe);outline-offset:6px;po
   .f-body{position:static;padding:0 18px 22px}
   .f-stat b{font-size:28px}
   .log li{grid-template-columns:1fr;gap:2px}
-  .tiles{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-  .tile .cap{font-size:14px}
+  .tiles{gap:8px}
+  .tile .cap{font-size:18px}
   .courses td:nth-child(3),.courses th:nth-child(3){display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;animation:none !important;scroll-behavior:auto !important}}
 @media print{.top,.toast,.spec-btn,body::after{display:none}}
+.is-art[hidden],.is-link[hidden]{display:none}
