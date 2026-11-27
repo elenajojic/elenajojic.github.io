@@ -334,4 +334,30 @@ revealTargets.forEach(el => io.observe(el));
 const words = [...S.interests, ...Object.values(S.skills).flat()];
 const run = words.map(w => `<span>${esc(w)}</span><i aria-hidden="true">✦</i>`).join("");
 $("#marquee").innerHTML = `<div class="mq-track">${run}${run}</div>`;
+
+/* ---------- custom cursor ---------- */
+if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
+  document.documentElement.classList.add("has-cursor");
+  const dot = $(".cur-dot"), ring = $(".cur-ring"), label = $("span", ring);
+  let tx = -100, ty = -100, rx = -100, ry = -100;
+  addEventListener("pointermove", e => {
+    tx = e.clientX; ty = e.clientY;
+    dot.style.transform = `translate(${tx}px,${ty}px)`;
+    document.documentElement.classList.remove("cur-out");
+    const special = e.target.closest(".folder:not(.open), .tile");
+    const t = special || e.target.closest("a, button, .chip");
+    ring.classList.toggle("big", !!t);
+    label.textContent = special ? (special.matches(".tile") ? "view" : "open") : "";
+    ring.classList.toggle("labeled", !!label.textContent);
+    dot.style.opacity = label.textContent ? 0 : "";
+  });
+  document.addEventListener("pointerleave", () => document.documentElement.classList.add("cur-out"));
+  addEventListener("pointerdown", () => ring.classList.add("press"));
+  addEventListener("pointerup", () => ring.classList.remove("press"));
+  (function follow() {
+    rx += (tx - rx) * .18; ry += (ty - ry) * .18;
+    ring.style.transform = `translate(${rx}px,${ry}px)`;
+    requestAnimationFrame(follow);
+  })();
+}
 }

@@ -22,7 +22,7 @@ window.SITE = {
   minors: "Minor in Business · Premed track",
   now: "Hardware Engineer, CLAWS",
 
-  email: "elenajojic7@gmail.com",
+  email: "ejojic@umich.edu",
   linkedin: "https://www.linkedin.com/in/elenajojic/",
   github: "https://github.com/elenajojic",
   resumePdf: "",     // put your PDF in assets/ then set: "assets/Elena_Jojic_Resume.pdf"
