@@ -274,7 +274,7 @@ html:not(.loaded) body{overflow:hidden}
 .dog .lens{animation:blink 2.2s steps(2) infinite}
 @keyframes blink{50%{opacity:.35}}
 .dog-bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,6px) scale(.9);margin-bottom:6px;background:var(--deep);color:var(--limonade);font:500 12px var(--mono);padding:7px 11px;border-radius:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s,transform .25s cubic-bezier(.2,1.4,.4,1)}
-.dog-bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep)}
+.dog-bubble::after{content:"";position:absolute;top:100%;left:calc(50% - var(--tail,0px));margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep)}
 .dog.talk .dog-bubble{opacity:1;transform:translate(-50%,0) scale(1)}
 .dog-toggle{border:0;background:none;padding:0;font:inherit;color:var(--menthe);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 .dog-toggle[hidden]{display:none}

@@ -192,7 +192,7 @@ if (S.linkedin) rows.push(`<li><a href="${esc(S.linkedin)}" target="_blank" rel=
 if (S.github) rows.push(`<li><a href="${esc(S.github)}" target="_blank" rel="noopener">GitHub ↗</a></li>`);
 if (S.resumePdf) rows.push(`<li><a href="${esc(S.resumePdf)}" target="_blank" rel="noopener">Resume ↗</a></li>`);
 $("#contactList").innerHTML = rows.join("");
-const toast = msg => { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), 2400); };
+const toast = (msg, ms = 2400) => { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.h); toast.h = setTimeout(() => t.classList.remove("show"), ms); };
 $("#copyMail")?.addEventListener("click", async () => {
   try { await navigator.clipboard.writeText(S.email); toast("Email copied"); } catch { toast(S.email); }
 });
@@ -390,10 +390,10 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
     tx = e.clientX; ty = e.clientY;
     dot.style.transform = `translate(${tx}px,${ty}px)`;
     document.documentElement.classList.remove("cur-out");
-    const special = e.target.closest(".folder:not(.open), .tile, .cutout");
+    const special = e.target.closest(".folder:not(.open), .tile, .cutout, .dog");
     const t = special || e.target.closest("a, button, .chip");
     ring.classList.toggle("big", !!t);
-    const lbl = special ? (special.matches(".tile") ? "view" : special.matches(".cutout") ? "click me" : "open") : "";
+    const lbl = special ? (special.matches(".tile") ? "view" : special.matches(".cutout, .dog") ? "click me" : "open") : "";
     if (lbl !== lastLabel) { lastLabel = lbl; curTxt.textContent = lbl ? (lbl.toUpperCase() + " • ").repeat(lbl.length > 4 ? 3 : 4) : ""; }
     ring.classList.toggle("labeled", !!lbl);
   });
@@ -474,21 +474,28 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
         until = now + (mode === "idle" ? 1800 + Math.random() * 1600 : 4000 + Math.random() * 5000);
       }
       if (mode === "walk" || leaving) {
-        x += dir * (leaving ? 420 : 70) * dt;
+        x += dir * (leaving ? 150 : 70) * dt;
         if (!leaving) { if (x > W()) { x = W(); dir = -1; } if (x < 0) { x = 0; dir = 1; } }
       }
     }
     dog.classList.toggle("walking", mode === "walk" || leaving);
     dog.classList.toggle("fast", leaving);
     dog.style.transform = `translateX(${x}px)`;
+    if (dog.classList.contains("talk")) { // keep the speech bubble on screen
+      const bw = bubble.offsetWidth, c = x + dog.offsetWidth / 2;
+      let shift = 0;
+      if (c - bw / 2 < 8) shift = 8 - (c - bw / 2);
+      else if (c + bw / 2 > innerWidth - 8) shift = innerWidth - 8 - (c + bw / 2);
+      bubble.style.translate = `${shift}px 0`;
+    }
     flip.style.transform = `scaleX(${dir})`;
-    if (leaving && (x > innerWidth + 20 || x < -dog.offsetWidth - 20)) { dog.hidden = true; running = false; toggle.hidden = false; return; }
+    if (leaving && (x > innerWidth + 20 || x < -dog.offsetWidth - 20)) { dog.hidden = true; dog.classList.remove("talk"); running = false; toggle.hidden = false; toast("Robot dog is off. Bring him back anytime from the footer.", 5000); return; }
     requestAnimationFrame(step);
   }
   function poke() {
     const now = performance.now();
     if (now - confirmT < 3500) { // second click: turn off
-      confirmT = 0; setOff(true); say("bye! bring me back from the footer", 1800);
+      confirmT = 0; setOff(true); say("bye! bring me back from the footer", 0);
       leaving = true; mode = "walk"; dir = x > innerWidth / 2 ? 1 : -1;
     } else {
       confirmT = now; mode = "idle"; until = now + 3500;
