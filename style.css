@@ -254,26 +254,25 @@ html:not(.loaded) body{overflow:hidden}
 @media (prefers-reduced-motion:reduce){.h.split .wm>span{transform:none}.cabinet.deal .folder{opacity:1;transform:none}.loader{display:none}}
 
 /* robot dog */
-.dog{position:fixed;left:0;bottom:4px;z-index:90;width:96px;cursor:pointer;will-change:transform}
+.dog{position:fixed;left:0;bottom:0;z-index:90;width:108px;cursor:pointer;will-change:transform}
 .dog[hidden]{display:none}
 .dog-flip{transition:transform .25s}
 .dog svg{display:block;width:100%;height:auto;overflow:visible}
-.dog .leg{fill:#A6C474;transform-box:fill-box;transform-origin:50% 8%}
-.dog .far .leg{fill:#8DAE5F}
-.dog.walking .la{animation:legA .38s ease-in-out infinite alternate}
-.dog.walking .lb{animation:legA .38s ease-in-out infinite alternate-reverse}
-.dog.fast .la,.dog.fast .lb{animation-duration:.16s}
-@keyframes legA{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
-.dog.walking .bod{animation:bob .19s ease-in-out infinite alternate}
+.dog .thigh,.dog .shin,.dog .head,.dog .bod{transform-box:view-box}
+.dog.walking .thigh.pa{animation:thigh .42s ease-in-out infinite alternate}
+.dog.walking .thigh.pb{animation:thigh .42s ease-in-out infinite alternate-reverse}
+.dog.walking .shin.pa{animation:shin .42s ease-in-out infinite alternate}
+.dog.walking .shin.pb{animation:shin .42s ease-in-out infinite alternate-reverse}
+.dog.fast .thigh,.dog.fast .shin{animation-duration:.17s !important}
+@keyframes thigh{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}
+@keyframes shin{from{transform:rotate(18deg)}to{transform:rotate(-6deg)}}
+.dog.walking .bod{animation:bob .21s ease-in-out infinite alternate}
 @keyframes bob{to{transform:translateY(-1.5px)}}
-.dog .tail{transform-box:fill-box;transform-origin:100% 100%;animation:wag .5s ease-in-out infinite alternate}
-.dog:not(.walking) .tail{animation-duration:.18s}
-@keyframes wag{from{transform:rotate(-14deg)}to{transform:rotate(18deg)}}
-.dog .head{transform-box:fill-box;transform-origin:20% 90%;transition:transform .3s}
-.dog:not(.walking) .head{transform:rotate(-8deg)}
-.dog .blink{animation:blink 1.6s steps(2) infinite}
-@keyframes blink{50%{opacity:.25}}
-.dog:hover .eye{r:2.6}
+.dog .head{transform-origin:100px 40px;transition:transform .35s}
+.dog:not(.walking) .head{transform:rotate(-7deg)}
+.dog:not(.walking) .thigh{transform:rotate(-4deg);transition:transform .3s}
+.dog .lens{animation:blink 2.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.35}}
 .dog-bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,6px) scale(.9);margin-bottom:6px;background:var(--deep);color:var(--limonade);font:500 12px var(--mono);padding:7px 11px;border-radius:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s,transform .25s cubic-bezier(.2,1.4,.4,1)}
 .dog-bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep)}
 .dog.talk .dog-bubble{opacity:1;transform:translate(-50%,0) scale(1)}

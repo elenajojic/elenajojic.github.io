@@ -162,24 +162,53 @@
 <div id="dog" class="dog" role="button" tabindex="0" aria-label="Robot dog. Click twice to turn it off" hidden>
   <div class="dog-bubble" id="dogBubble" aria-live="polite"></div>
   <div class="dog-flip">
-    <svg viewBox="0 0 120 84" aria-hidden="true">
-      <g class="tail"><path d="M24 36 L12 22" stroke="#8DAE5F" stroke-width="4" stroke-linecap="round"/><circle cx="11" cy="20" r="4" fill="#C8DC9E"/></g>
-      <g class="legs far"><rect class="leg la" x="33" y="46" width="7" height="24" rx="3.5"/><rect class="leg lb" x="66" y="46" width="7" height="24" rx="3.5"/></g>
-      <g class="bod">
-        <rect x="20" y="28" width="60" height="26" rx="13" fill="#B9D08B"/>
-        <path d="M34 34 h30" stroke="#8DAE5F" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
-        <circle cx="50" cy="45" r="3.2" fill="#0E3A35" opacity=".55"/>
-        <g class="head">
-          <path d="M78 15 L82 3 L89 13 Z" fill="#8DAE5F"/>
-          <rect x="70" y="12" width="34" height="27" rx="10" fill="#C8DC9E"/>
-          <rect x="94" y="24" width="16" height="13" rx="6" fill="#B9D08B"/>
-          <circle cx="108" cy="27" r="2.6" fill="#0E3A35"/>
-          <rect class="visor" x="82" y="19" width="15" height="8" rx="4" fill="#0E3A35"/>
-          <circle class="eye" cx="92" cy="23" r="2" fill="#A4CF4A"/>
-          <line x1="76" y1="12" x2="73" y2="2" stroke="#8DAE5F" stroke-width="2" stroke-linecap="round"/><circle cx="73" cy="2" r="2.4" fill="#A4CF4A" class="blink"/>
+    <svg viewBox="0 0 132 96" aria-hidden="true">
+      <g class="legs far"><g class="thigh pb" style="transform-origin:40px 38px">
+        <line x1="40" y1="38" x2="48" y2="63" stroke="#9DBA70" stroke-width="9" stroke-linecap="round"/>
+        <g class="shin pb" style="transform-origin:48px 63px">
+          <line x1="48" y1="63" x2="39" y2="87" stroke="#8DAE5F" stroke-width="5.5" stroke-linecap="round"/>
+          <ellipse cx="39" cy="88" rx="4.6" ry="3.6" fill="#2A3533"/>
         </g>
+        <circle cx="48" cy="63" r="4" fill="#7C9C52"/>
+      </g><g class="thigh pa" style="transform-origin:92px 38px">
+        <line x1="92" y1="38" x2="100" y2="63" stroke="#9DBA70" stroke-width="9" stroke-linecap="round"/>
+        <g class="shin pa" style="transform-origin:100px 63px">
+          <line x1="100" y1="63" x2="91" y2="87" stroke="#8DAE5F" stroke-width="5.5" stroke-linecap="round"/>
+          <ellipse cx="91" cy="88" rx="4.6" ry="3.6" fill="#2A3533"/>
+        </g>
+        <circle cx="100" cy="63" r="4" fill="#7C9C52"/>
+      </g></g>
+      <g class="bod">
+        <rect x="22" y="22" width="80" height="22" rx="9" fill="#B9D08B"/>
+        <rect x="30" y="24" width="60" height="5" rx="2.5" fill="#D6E6B4"/>
+        <rect x="44" y="40" width="40" height="7" rx="3" fill="#8DAE5F"/>
+        <rect x="56" y="29" width="14" height="5" rx="2" fill="#0E3A35" opacity=".18"/>
+        <g class="head">
+          <rect x="96" y="17" width="22" height="25" rx="7" fill="#C8DC9E"/>
+          <rect x="111" y="21" width="9" height="17" rx="3.5" fill="#1F2A28"/>
+          <circle class="lens" cx="115.5" cy="26" r="2.2" fill="#A4CF4A"/>
+          <circle cx="115.5" cy="32.5" r="1.5" fill="#5E6E6A"/>
+          <path d="M101 42 q4 7 11 6 M104 42 q3 5 8 4.5" stroke="#1F2A28" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M100 22 h7 M100 25.5 h5" stroke="#8DAE5F" stroke-width="1.6" stroke-linecap="round"/>
+        </g>
+        <circle cx="40" cy="38" r="8.5" fill="#A6C474"/><circle cx="40" cy="38" r="3.4" fill="#8DAE5F"/>
+        <circle cx="92" cy="38" r="8.5" fill="#A6C474"/><circle cx="92" cy="38" r="3.4" fill="#8DAE5F"/>
       </g>
-      <g class="legs near"><rect class="leg lb" x="27" y="46" width="7" height="25" rx="3.5"/><rect class="leg la" x="60" y="46" width="7" height="25" rx="3.5"/></g>
+      <g class="legs near"><g class="thigh pa" style="transform-origin:36px 38px">
+        <line x1="36" y1="38" x2="44" y2="63" stroke="#C8DC9E" stroke-width="9" stroke-linecap="round"/>
+        <g class="shin pa" style="transform-origin:44px 63px">
+          <line x1="44" y1="63" x2="35" y2="87" stroke="#B4CD86" stroke-width="5.5" stroke-linecap="round"/>
+          <ellipse cx="35" cy="88" rx="4.6" ry="3.6" fill="#1F2A28"/>
+        </g>
+        <circle cx="44" cy="63" r="4" fill="#8DAE5F"/>
+      </g><g class="thigh pb" style="transform-origin:88px 38px">
+        <line x1="88" y1="38" x2="96" y2="63" stroke="#C8DC9E" stroke-width="9" stroke-linecap="round"/>
+        <g class="shin pb" style="transform-origin:96px 63px">
+          <line x1="96" y1="63" x2="87" y2="87" stroke="#B4CD86" stroke-width="5.5" stroke-linecap="round"/>
+          <ellipse cx="87" cy="88" rx="4.6" ry="3.6" fill="#1F2A28"/>
+        </g>
+        <circle cx="96" cy="63" r="4" fill="#8DAE5F"/>
+      </g></g>
     </svg>
   </div>
 </div>
