@@ -69,7 +69,7 @@ button{font:inherit;color:inherit}
 .hero-links a:hover{background:var(--ink);color:var(--bg)}
 .cutout{position:absolute;z-index:2;left:50%;bottom:0;transform:translateX(-50%);width:clamp(260px,36vw,500px);aspect-ratio:3/4}
 .cutout{cursor:pointer}
-.cutout canvas{position:absolute;left:-60%;top:-45%;width:220%;height:145%;display:block;pointer-events:none}
+.hero-canvas{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
 .sticky{position:absolute;right:-30%;top:22%;background:var(--paper);color:var(--deep);font:500 12px/1.5 var(--mono);padding:10px 12px;border:1px dashed var(--deep);border-radius:6px}
 .hero-foot{position:absolute;left:max(4vw,16px);right:max(4vw,16px);bottom:24px;display:flex;gap:16px;align-items:end;z-index:3;font-size:15px}
 .hero-foot p{margin:0}
@@ -214,15 +214,18 @@ button{font:inherit;color:inherit}
 .cur-dot,.cur-ring{display:none}
 .has-cursor,.has-cursor *{cursor:none !important}
 .has-cursor .cur-dot,.has-cursor .cur-ring{display:block;position:fixed;left:0;top:0;pointer-events:none;z-index:1000;mix-blend-mode:difference}
-.cur-dot{width:8px;height:8px;margin:-4px 0 0 -4px;border-radius:50%;background:#fff}
+.cur-dot{width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#fff;transition:width .25s,height .25s,margin .25s}
 .cur-ring{width:0;height:0}
-.cur-ring::before{content:"";position:absolute;left:-18px;top:-18px;width:36px;height:36px;border:1.5px solid #fff;border-radius:50%;transition:all .28s cubic-bezier(.2,.8,.2,1)}
-.cur-ring.big::before{left:-32px;top:-32px;width:64px;height:64px;background:rgba(255,255,255,.12)}
+.cur-ring::before{content:"";position:absolute;left:-13px;top:-13px;width:26px;height:26px;border:1px solid #fff;border-radius:50%;transition:all .28s cubic-bezier(.2,.8,.2,1)}
+.cur-ring.big::before{left:-20px;top:-20px;width:40px;height:40px;background:rgba(255,255,255,.1)}
 .has-cursor .cur-ring.labeled{mix-blend-mode:normal}
-.cur-ring.labeled::before{left:-38px;top:-38px;width:76px;height:76px;background:var(--deep);border-color:var(--menthe)}
-.cur-ring.press::before{transform:scale(.8)}
-.cur-ring span{position:absolute;left:0;top:0;transform:translate(-50%,-50%);font:500 11px var(--mono);color:var(--limonade);text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;opacity:0;transition:opacity .2s}
-.cur-ring.labeled span{opacity:1}
+.cur-ring.labeled::before{left:-7px;top:-7px;width:14px;height:14px;background:var(--deep);border-color:var(--deep)}
+.cur-ring.press::before{transform:scale(.7)}
+.cur-txt{position:absolute;left:-38px;top:-38px;width:76px;height:76px;overflow:visible;opacity:0;transform:scale(.6);transition:opacity .25s,transform .35s cubic-bezier(.2,.8,.2,1)}
+.cur-txt text{font:700 11px var(--mono);letter-spacing:.14em;fill:var(--deep);stroke:#fff;stroke-width:2.5px;paint-order:stroke;stroke-linejoin:round}
+.cur-ring.labeled .cur-txt{opacity:1;transform:scale(1);animation:spin 7s linear infinite}
+@keyframes spin{from{rotate:0deg}to{rotate:360deg}}
+.has-cursor .cur-ring.labeled ~ .cur-dot{opacity:0}
 .cur-out .cur-dot,.cur-out .cur-ring{opacity:0}
 .island .is-inner{cursor:auto}
 
@@ -249,6 +252,34 @@ html:not(.loaded) body{overflow:hidden}
 .bigname .w1,.bigname .w2{will-change:transform}
 .mag{transition:transform .35s cubic-bezier(.2,.8,.2,1),background .2s,color .2s}
 @media (prefers-reduced-motion:reduce){.h.split .wm>span{transform:none}.cabinet.deal .folder{opacity:1;transform:none}.loader{display:none}}
+
+/* robot dog */
+.dog{position:fixed;left:0;bottom:4px;z-index:90;width:96px;cursor:pointer;will-change:transform}
+.dog[hidden]{display:none}
+.dog-flip{transition:transform .25s}
+.dog svg{display:block;width:100%;height:auto;overflow:visible}
+.dog .leg{fill:#A6C474;transform-box:fill-box;transform-origin:50% 8%}
+.dog .far .leg{fill:#8DAE5F}
+.dog.walking .la{animation:legA .38s ease-in-out infinite alternate}
+.dog.walking .lb{animation:legA .38s ease-in-out infinite alternate-reverse}
+.dog.fast .la,.dog.fast .lb{animation-duration:.16s}
+@keyframes legA{from{transform:rotate(-24deg)}to{transform:rotate(24deg)}}
+.dog.walking .bod{animation:bob .19s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-1.5px)}}
+.dog .tail{transform-box:fill-box;transform-origin:100% 100%;animation:wag .5s ease-in-out infinite alternate}
+.dog:not(.walking) .tail{animation-duration:.18s}
+@keyframes wag{from{transform:rotate(-14deg)}to{transform:rotate(18deg)}}
+.dog .head{transform-box:fill-box;transform-origin:20% 90%;transition:transform .3s}
+.dog:not(.walking) .head{transform:rotate(-8deg)}
+.dog .blink{animation:blink 1.6s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+.dog:hover .eye{r:2.6}
+.dog-bubble{position:absolute;bottom:100%;left:50%;transform:translate(-50%,6px) scale(.9);margin-bottom:6px;background:var(--deep);color:var(--limonade);font:500 12px var(--mono);padding:7px 11px;border-radius:12px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s,transform .25s cubic-bezier(.2,1.4,.4,1)}
+.dog-bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--deep)}
+.dog.talk .dog-bubble{opacity:1;transform:translate(-50%,0) scale(1)}
+.dog-toggle{border:0;background:none;padding:0;font:inherit;color:var(--menthe);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.dog-toggle[hidden]{display:none}
+@media (max-width:760px){.dog{width:72px}.dog-bubble{font-size:11px;white-space:normal;width:170px;text-align:center}}
 
 /* island */
 .island{border:0;padding:0;background:transparent;max-width:none;max-height:none;overflow:visible}

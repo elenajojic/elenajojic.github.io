@@ -242,15 +242,17 @@ function placeholder(w, h) {
 /* Dots are computed once (prepare), then redrawn cheaply (render) so they can
    build in on load and react to the cursor. */
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let ox = 0, oy = 0, burst = null, scatter = 0, dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
-const PADX = .6, PADT = .45; // canvas extends past the photo so burst dots can fly out
+let ox = 0, oy = 0, ih0 = 0, burst = null, scatter = 0, dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
+/* the canvas covers the whole hero, so burst dots can fly anywhere in it */
 function prepare() {
-  const W = cv.parentElement.clientWidth, H = cv.parentElement.clientHeight; if (!W) return;
-  dpr = Math.max(2, Math.min((devicePixelRatio || 1) * 1.5, 3));
-  cv.width = Math.round(W * (1 + PADX * 2) * dpr); cv.height = Math.round(H * (1 + PADT) * dpr);
-  ox = W * PADX * dpr; oy = H * PADT * dpr;
-  const iw = W * dpr, ih = H * dpr;
-  step = Math.max(4, Math.round(W / 175 * dpr));
+  const hero = cv.parentElement, cut = $(".cutout");
+  const HW = hero.clientWidth, HH = hero.clientHeight, W = cut.offsetWidth, H = cut.offsetHeight; if (!W || !HW) return;
+  dpr = Math.min(2, Math.sqrt(9e6 / (HW * HH)));
+  cv.width = Math.round(HW * dpr); cv.height = Math.round(HH * dpr);
+  const hb = hero.getBoundingClientRect(), cb = cut.getBoundingClientRect();
+  ox = (cb.left - hb.left) * dpr; oy = (cb.top - hb.top) * dpr;
+  const iw = W * dpr, ih = H * dpr; ih0 = ih;
+  step = Math.max(3, Math.round(W / 175 * dpr));
   const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
@@ -281,7 +283,7 @@ function render() {
   if (!dots) return;
   const Wc = cv.width, Hc = cv.height;
   ctx.clearRect(0, 0, Wc, Hc);
-  const B = burstAmount(), bx = burst ? burst.x : 0, by = burst ? burst.y : 0;
+  const bt = burstTime(), B = bt < 0 ? 0 : Math.min(1, bt / .3), bx = burst ? burst.x : 0, by = burst ? burst.y : 0;
   ctx.globalAlpha = Math.min(1, intro * 1.5) * (1 - Math.min(1, scatter * 1.6)) * (1 - Math.min(1, B * 2)); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
   ctx.fillStyle = "#3b4241";
   ctx.beginPath();
@@ -290,8 +292,8 @@ function render() {
     if (scatter > 0) { // dots break apart and float up as the hero scrolls away
       const sd = dots[k + 3], ang = sd * 6.283;
       const s2 = scatter * scatter;
-      x += Math.cos(ang) * s2 * Wc * .45 * (.03 + sd * .1);
-      y -= s2 * Hc * .7 * (.04 + sd * .22) - Math.sin(ang) * s2 * Hc * .02;
+      x += Math.cos(ang) * s2 * Wc * .3 * (.03 + sd * .1);
+      y -= s2 * Hc * .85 * (.04 + sd * .22) - Math.sin(ang) * s2 * Hc * .02;
       r *= 1 - Math.min(1, scatter * (.4 + sd * .9));
       if (r < .25) continue;
     }
@@ -300,12 +302,18 @@ function render() {
       r *= 1 - Math.pow(1 - t, 3);
       if (r < .2) continue;
     }
-    if (B > 0) { // burst: dots fly away from the click, then fly back
-      const sd = dots[k + 3], dx = x - bx, dy = y - by, dist = Math.hypot(dx, dy) || 1;
-      const ang = Math.atan2(dy, dx) + (sd - .5) * 1.2;
-      const far = (140 + sd * 520) * dpr * (1.3 - Math.min(1, dist / Hc));
-      x += Math.cos(ang) * far * B; y += Math.sin(ang) * far * B + B * B * sd * 90 * dpr;
-      r *= 1 - B * .35;
+    if (bt >= 0) { // burst: fly out fast, pause ~1s, then each dot drifts home on its own delay
+      const sd = dots[k + 3];
+      let b;
+      if (bt < .7) b = 1 - Math.pow(1 - bt / .7, 4);
+      else { const back = 1.6 + sd * .7, p = (bt - back) / .8; b = p <= 0 ? 1 : p >= 1 ? 0 : 1 - p * p * (3 - 2 * p); }
+      if (b > 0) {
+        const dx = x - bx, dy = y - by, dist = Math.hypot(dx, dy) || 1;
+        const ang = Math.atan2(dy, dx) + (sd - .5) * 1.2;
+        const far = (120 + sd * 480) * dpr * (1.3 - Math.min(1, dist / (ih0 || Hc)));
+        x += Math.cos(ang) * far * b; y += Math.sin(ang) * far * b + b * b * sd * 80 * dpr;
+        r *= 1 - b * .35;
+      }
     }
     ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, Math.PI * 2);
   }
@@ -321,16 +329,14 @@ function playIntro() {
 }
 const heroEl = $(".hero");
 /* click the photo: dots burst away, then come back after 5 seconds */
-function burstAmount() {
-  if (!burst) return 0;
+function burstTime() {
+  if (!burst) return -1;
   const t = (performance.now() - burst.t0) / 1000;
-  if (t < .9) { const p = t / .9; return 1 - Math.pow(1 - p, 4); }
-  if (t < 5) return 1;
-  if (t < 6.6) { const p = (t - 5) / 1.6; return 1 - p * p * (3 - 2 * p); }
-  burst = null; return 0;
+  if (t > 3.2) { burst = null; return -1; }
+  return t;
 }
 function burstLoop() { render(); if (burst) requestAnimationFrame(burstLoop); else render(); }
-const cutoutEl = cv.parentElement;
+const cutoutEl = $(".cutout");
 cutoutEl.addEventListener("click", e => {
   if (reduceMotion || !dots) return;
   const b = cv.getBoundingClientRect(), sx = cv.width / b.width;
@@ -377,7 +383,8 @@ $("#marquee").innerHTML = `<div class="mq-track">${run}${run}</div>`;
 /* ---------- custom cursor ---------- */
 if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
   document.documentElement.classList.add("has-cursor", "cur-out");
-  const dot = $(".cur-dot"), ring = $(".cur-ring"), label = $("span", ring);
+  const dot = $(".cur-dot"), ring = $(".cur-ring"), curTxt = $("#curTxt");
+  let lastLabel = "";
   let tx = -100, ty = -100, rx = -100, ry = -100;
   addEventListener("pointermove", e => {
     tx = e.clientX; ty = e.clientY;
@@ -386,9 +393,9 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
     const special = e.target.closest(".folder:not(.open), .tile, .cutout");
     const t = special || e.target.closest("a, button, .chip");
     ring.classList.toggle("big", !!t);
-    label.textContent = special ? (special.matches(".tile") ? "view" : special.matches(".cutout") ? "click" : "open") : "";
-    ring.classList.toggle("labeled", !!label.textContent);
-    dot.style.opacity = label.textContent ? 0 : "";
+    const lbl = special ? (special.matches(".tile") ? "view" : special.matches(".cutout") ? "click me" : "open") : "";
+    if (lbl !== lastLabel) { lastLabel = lbl; curTxt.textContent = lbl ? (lbl.toUpperCase() + " • ").repeat(lbl.length > 4 ? 3 : 4) : ""; }
+    ring.classList.toggle("labeled", !!lbl);
   });
   document.addEventListener("pointerleave", () => document.documentElement.classList.add("cur-out"));
   addEventListener("pointerdown", () => ring.classList.add("press"));
@@ -443,5 +450,56 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
     });
     el.addEventListener("pointerleave", () => el.style.transform = "");
   });
+}
+
+/* ---------- robot dog ---------- */
+{
+  const dog = $("#dog"), bubble = $("#dogBubble"), flip = $(".dog-flip", dog), toggle = $("#dogToggle");
+  const W = () => innerWidth - dog.offsetWidth;
+  let x = 40, dir = 1, mode = "walk", until = performance.now() + 5000, last = performance.now(), confirmT = 0, running = false, leaving = false;
+  const isOff = () => { try { return localStorage.getItem("dogOff") === "1"; } catch { return false; } };
+  const setOff = v => { try { v ? localStorage.setItem("dogOff", "1") : localStorage.removeItem("dogOff"); } catch {} };
+  const say = (t, ms = 2200) => { bubble.textContent = t; dog.classList.add("talk"); clearTimeout(say.h); if (ms) say.h = setTimeout(() => dog.classList.remove("talk"), ms); };
+  function start(fromEdge) {
+    dog.hidden = false; toggle.hidden = true; leaving = false;
+    if (fromEdge) { x = -dog.offsetWidth; dir = 1; mode = "walk"; }
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(step); }
+  }
+  function step(now) {
+    const dt = Math.min(.05, (now - last) / 1000); last = now;
+    if (!reduceMotion || leaving) {
+      if (now > until && !leaving) {
+        mode = mode === "walk" && Math.random() < .5 ? "idle" : "walk";
+        if (mode === "walk" && Math.random() < .35) dir *= -1;
+        until = now + (mode === "idle" ? 1800 + Math.random() * 1600 : 4000 + Math.random() * 5000);
+      }
+      if (mode === "walk" || leaving) {
+        x += dir * (leaving ? 420 : 70) * dt;
+        if (!leaving) { if (x > W()) { x = W(); dir = -1; } if (x < 0) { x = 0; dir = 1; } }
+      }
+    }
+    dog.classList.toggle("walking", mode === "walk" || leaving);
+    dog.classList.toggle("fast", leaving);
+    dog.style.transform = `translateX(${x}px)`;
+    flip.style.transform = `scaleX(${dir})`;
+    if (leaving && (x > innerWidth + 20 || x < -dog.offsetWidth - 20)) { dog.hidden = true; running = false; toggle.hidden = false; return; }
+    requestAnimationFrame(step);
+  }
+  function poke() {
+    const now = performance.now();
+    if (now - confirmT < 3500) { // second click: turn off
+      confirmT = 0; setOff(true); say("bye! bring me back from the footer", 1800);
+      leaving = true; mode = "walk"; dir = x > innerWidth / 2 ? 1 : -1;
+    } else {
+      confirmT = now; mode = "idle"; until = now + 3500;
+      say("turn me off? click again", 3500);
+    }
+  }
+  dog.addEventListener("click", poke);
+  dog.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); poke(); } });
+  toggle.addEventListener("click", () => { setOff(false); start(true); say("i'm back!", 1600); });
+  if (isOff()) toggle.hidden = false;
+  else loaderDone.then(() => setTimeout(() => start(true), 1200));
+  if (reduceMotion) { mode = "idle"; x = 24; }
 }
 }

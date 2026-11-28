@@ -43,8 +43,8 @@
       <p id="minorLine" class="sub"></p>
       <div class="hero-links" id="heroLinks"></div>
     </div>
+    <canvas id="halftone" class="hero-canvas" aria-label="Halftone portrait of Elena"></canvas>
     <div class="cutout" data-spec="portrait">
-      <canvas id="halftone" aria-label="Halftone portrait of Elena"></canvas>
       <div class="sticky" id="photoNote" hidden>Add a cutout photo at<br><b>assets/elena.png</b></div>
     </div>
     <div class="hero-foot">
@@ -145,7 +145,7 @@
 
 <footer class="foot">
   <span>© <span id="yr"></span> Elena Jojic</span>
-  <span>Ann Arbor, Michigan</span>
+  <span>Ann Arbor, Michigan <button id="dogToggle" class="dog-toggle" hidden>· bring back the robot dog</button></span>
 </footer>
 
 <dialog id="island" class="island" aria-labelledby="isTitle">
@@ -159,8 +159,32 @@
   </div>
 </dialog>
 
+<div id="dog" class="dog" role="button" tabindex="0" aria-label="Robot dog. Click twice to turn it off" hidden>
+  <div class="dog-bubble" id="dogBubble" aria-live="polite"></div>
+  <div class="dog-flip">
+    <svg viewBox="0 0 120 84" aria-hidden="true">
+      <g class="tail"><path d="M24 36 L12 22" stroke="#8DAE5F" stroke-width="4" stroke-linecap="round"/><circle cx="11" cy="20" r="4" fill="#C8DC9E"/></g>
+      <g class="legs far"><rect class="leg la" x="33" y="46" width="7" height="24" rx="3.5"/><rect class="leg lb" x="66" y="46" width="7" height="24" rx="3.5"/></g>
+      <g class="bod">
+        <rect x="20" y="28" width="60" height="26" rx="13" fill="#B9D08B"/>
+        <path d="M34 34 h30" stroke="#8DAE5F" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
+        <circle cx="50" cy="45" r="3.2" fill="#0E3A35" opacity=".55"/>
+        <g class="head">
+          <path d="M78 15 L82 3 L89 13 Z" fill="#8DAE5F"/>
+          <rect x="70" y="12" width="34" height="27" rx="10" fill="#C8DC9E"/>
+          <rect x="94" y="24" width="16" height="13" rx="6" fill="#B9D08B"/>
+          <circle cx="108" cy="27" r="2.6" fill="#0E3A35"/>
+          <rect class="visor" x="82" y="19" width="15" height="8" rx="4" fill="#0E3A35"/>
+          <circle class="eye" cx="92" cy="23" r="2" fill="#A4CF4A"/>
+          <line x1="76" y1="12" x2="73" y2="2" stroke="#8DAE5F" stroke-width="2" stroke-linecap="round"/><circle cx="73" cy="2" r="2.4" fill="#A4CF4A" class="blink"/>
+        </g>
+      </g>
+      <g class="legs near"><rect class="leg lb" x="27" y="46" width="7" height="25" rx="3.5"/><rect class="leg la" x="60" y="46" width="7" height="25" rx="3.5"/></g>
+    </svg>
+  </div>
+</div>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
-<div class="cur-ring" aria-hidden="true"><span></span></div>
+<div class="cur-ring" aria-hidden="true"><svg class="cur-txt" viewBox="0 0 100 100"><defs><path id="curPath" d="M50,50 m-40,0 a40,40 0 1,1 80,0 a40,40 0 1,1 -80,0"/></defs><text><textPath href="#curPath" id="curTxt"></textPath></text></svg></div>
 <div class="cur-dot" aria-hidden="true"></div>
 
 <script src="content.js"></script>
