@@ -242,20 +242,23 @@ function placeholder(w, h) {
 /* Dots are computed once (prepare), then redrawn cheaply (render) so they can
    build in on load and react to the cursor. */
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-let scatter = 0, dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
-const mouse = { x: -1e4, y: -1e4, active: false };
+let ox = 0, oy = 0, burst = null, scatter = 0, dots = [], back = null, dpr = 2, step = 6, intro = reduceMotion ? 1 : 0;
+const PADX = .6, PADT = .45; // canvas extends past the photo so burst dots can fly out
 function prepare() {
-  const W = cv.clientWidth, H = cv.clientHeight; if (!W) return;
+  const W = cv.parentElement.clientWidth, H = cv.parentElement.clientHeight; if (!W) return;
   dpr = Math.max(2, Math.min((devicePixelRatio || 1) * 1.5, 3));
-  cv.width = W * dpr; cv.height = H * dpr;
-  step = Math.max(3, Math.round(W / 175 * dpr));
+  cv.width = Math.round(W * (1 + PADX * 2) * dpr); cv.height = Math.round(H * (1 + PADT) * dpr);
+  ox = W * PADX * dpr; oy = H * PADT * dpr;
+  const iw = W * dpr, ih = H * dpr;
+  step = Math.max(4, Math.round(W / 175 * dpr));
   const rowStep = Math.round(step * .866);
   const s = src || placeholder(W, H);
   const off = document.createElement("canvas"); off.width = cv.width; off.height = cv.height;
   const o = off.getContext("2d");
   const sw = s.naturalWidth || s.width, sh = s.naturalHeight || s.height;
-  const sc = Math.max(cv.width / sw, cv.height / sh);
-  o.drawImage(s, (cv.width - sw * sc) / 2, cv.height - sh * sc, sw * sc, sh * sc);
+  const sc = Math.max(iw / sw, ih / sh);
+  o.save(); o.beginPath(); o.rect(ox, oy, iw, ih); o.clip();
+  o.drawImage(s, ox + (iw - sw * sc) / 2, oy + ih - sh * sc, sw * sc, sh * sc); o.restore();
   let data;
   try { data = o.getImageData(0, 0, cv.width, cv.height).data; }
   catch { dots = null; ctx.filter = "grayscale(1) contrast(1.3)"; ctx.drawImage(off, 0, 0); return; }
@@ -263,8 +266,8 @@ function prepare() {
   const bx = back.getContext("2d"); bx.drawImage(off, 0, 0); bx.globalCompositeOperation = "source-in";
   bx.fillStyle = getComputedStyle(document.body).backgroundColor; bx.fillRect(0, 0, back.width, back.height);
   dots = [];
-  for (let y = 0, row = 0; y < cv.height; y += rowStep, row++) {
-    for (let x = (row % 2) * step / 2; x < cv.width; x += step) {
+  for (let y = oy, row = 0; y < cv.height; y += rowStep, row++) {
+    for (let x = ox + (row % 2) * step / 2; x < ox + iw; x += step) {
       const i = ((Math.floor(y) * cv.width) + Math.floor(x)) * 4;
       const al = data[i + 3] / 255; if (al < .1) continue;
       const lum = (data[i] * .299 + data[i + 1] * .587 + data[i + 2] * .114) / 255;
@@ -278,17 +281,17 @@ function render() {
   if (!dots) return;
   const Wc = cv.width, Hc = cv.height;
   ctx.clearRect(0, 0, Wc, Hc);
-  ctx.globalAlpha = Math.min(1, intro * 1.5) * (1 - Math.min(1, scatter * 1.6)); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
+  const B = burstAmount(), bx = burst ? burst.x : 0, by = burst ? burst.y : 0;
+  ctx.globalAlpha = Math.min(1, intro * 1.5) * (1 - Math.min(1, scatter * 1.6)) * (1 - Math.min(1, B * 2)); ctx.drawImage(back, 0, 0); ctx.globalAlpha = 1;
   ctx.fillStyle = "#3b4241";
-  const R = 85 * dpr, mx = mouse.x * dpr, my = mouse.y * dpr, live = mouse.active;
   ctx.beginPath();
   for (let k = 0; k < dots.length; k += 4) {
     let x = dots[k], y = dots[k + 1], r = dots[k + 2];
     if (scatter > 0) { // dots break apart and float up as the hero scrolls away
       const sd = dots[k + 3], ang = sd * 6.283;
       const s2 = scatter * scatter;
-      x += Math.cos(ang) * s2 * Wc * (.03 + sd * .1);
-      y -= s2 * Hc * (.04 + sd * .22) - Math.sin(ang) * s2 * Hc * .03;
+      x += Math.cos(ang) * s2 * Wc * .45 * (.03 + sd * .1);
+      y -= s2 * Hc * .7 * (.04 + sd * .22) - Math.sin(ang) * s2 * Hc * .02;
       r *= 1 - Math.min(1, scatter * (.4 + sd * .9));
       if (r < .25) continue;
     }
@@ -297,12 +300,12 @@ function render() {
       r *= 1 - Math.pow(1 - t, 3);
       if (r < .2) continue;
     }
-    if (live) { // ripple: dots near the cursor drift outward
-      const dx = x - mx, dy = y - my, dist2 = dx * dx + dy * dy;
-      if (dist2 < R * R) {
-        const dist = Math.sqrt(dist2) || 1, f = 1 - dist / R, e = f * f * (3 - 2 * f);
-        x += dx / dist * e * step * 1.6; y += dy / dist * e * step * 1.6;
-      }
+    if (B > 0) { // burst: dots fly away from the click, then fly back
+      const sd = dots[k + 3], dx = x - bx, dy = y - by, dist = Math.hypot(dx, dy) || 1;
+      const ang = Math.atan2(dy, dx) + (sd - .5) * 1.2;
+      const far = (140 + sd * 520) * dpr * (1.3 - Math.min(1, dist / Hc));
+      x += Math.cos(ang) * far * B; y += Math.sin(ang) * far * B + B * B * sd * 90 * dpr;
+      r *= 1 - B * .35;
     }
     ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, Math.PI * 2);
   }
@@ -317,13 +320,24 @@ function playIntro() {
   requestAnimationFrame(tick);
 }
 const heroEl = $(".hero");
-if (!reduceMotion && matchMedia("(hover: hover)").matches) {
-  heroEl.addEventListener("pointermove", e => {
-    const b = cv.getBoundingClientRect();
-    mouse.x = e.clientX - b.left; mouse.y = e.clientY - b.top; mouse.active = true; queue();
-  });
-  heroEl.addEventListener("pointerleave", () => { mouse.active = false; queue(); });
+/* click the photo: dots burst away, then come back after 5 seconds */
+function burstAmount() {
+  if (!burst) return 0;
+  const t = (performance.now() - burst.t0) / 1000;
+  if (t < .9) { const p = t / .9; return 1 - Math.pow(1 - p, 4); }
+  if (t < 5) return 1;
+  if (t < 6.6) { const p = (t - 5) / 1.6; return 1 - p * p * (3 - 2 * p); }
+  burst = null; return 0;
 }
+function burstLoop() { render(); if (burst) requestAnimationFrame(burstLoop); else render(); }
+const cutoutEl = cv.parentElement;
+cutoutEl.addEventListener("click", e => {
+  if (reduceMotion || !dots) return;
+  const b = cv.getBoundingClientRect(), sx = cv.width / b.width;
+  const fresh = !burst;
+  burst = { x: (e.clientX - b.left) * sx, y: (e.clientY - b.top) * sx, t0: performance.now() };
+  if (fresh) requestAnimationFrame(burstLoop);
+});
 const img = new Image();
 img.onload = () => { src = img; prepare(); };
 img.onerror = () => { $("#photoNote").hidden = false; prepare(); };
@@ -369,10 +383,10 @@ if (matchMedia("(hover: hover) and (pointer: fine)").matches && !reduceMotion) {
     tx = e.clientX; ty = e.clientY;
     dot.style.transform = `translate(${tx}px,${ty}px)`;
     document.documentElement.classList.remove("cur-out");
-    const special = e.target.closest(".folder:not(.open), .tile");
+    const special = e.target.closest(".folder:not(.open), .tile, .cutout");
     const t = special || e.target.closest("a, button, .chip");
     ring.classList.toggle("big", !!t);
-    label.textContent = special ? (special.matches(".tile") ? "view" : "open") : "";
+    label.textContent = special ? (special.matches(".tile") ? "view" : special.matches(".cutout") ? "click" : "open") : "";
     ring.classList.toggle("labeled", !!label.textContent);
     dot.style.opacity = label.textContent ? 0 : "";
   });

@@ -68,7 +68,8 @@ button{font:inherit;color:inherit}
 .hero-links a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border-radius:8px;background:var(--paper);border:1px solid var(--line);text-decoration:none;font:500 13px var(--mono)}
 .hero-links a:hover{background:var(--ink);color:var(--bg)}
 .cutout{position:absolute;z-index:2;left:50%;bottom:0;transform:translateX(-50%);width:clamp(260px,36vw,500px);aspect-ratio:3/4}
-.cutout canvas{width:100%;height:100%;display:block}
+.cutout{cursor:pointer}
+.cutout canvas{position:absolute;left:-60%;top:-45%;width:220%;height:145%;display:block;pointer-events:none}
 .sticky{position:absolute;right:-30%;top:22%;background:var(--paper);color:var(--deep);font:500 12px/1.5 var(--mono);padding:10px 12px;border:1px dashed var(--deep);border-radius:6px}
 .hero-foot{position:absolute;left:max(4vw,16px);right:max(4vw,16px);bottom:24px;display:flex;gap:16px;align-items:end;z-index:3;font-size:15px}
 .hero-foot p{margin:0}
